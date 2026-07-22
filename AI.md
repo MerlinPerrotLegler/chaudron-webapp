@@ -13,10 +13,10 @@
 **Lis la documentation de cadrage** (dossier `obsidian/`), dans cet ordre :
 
 1. `obsidian/00 - Cas d'utilisation.md` — tous les cas d'usage (domaines A→G).
-2. `obsidian/10 - Décisions & questions ouvertes.md` — décisions actées **D1–D18** (à respecter) + questions ouvertes.
+2. `obsidian/01 - Décisions & questions ouvertes.md` — décisions actées **D1–D18** (à respecter) + questions ouvertes.
 3. `obsidian/A - Catalogue (spec).md` — spec détaillée du domaine en cours (Catalogue).
 4. `obsidian/A - Catalogue — Plan 1 (Fondations & Matières).md` — le **plan d'implémentation** à exécuter tâche par tâche.
-5. `obsidian/Guide technique pour développeurs.md` — contraintes d'hébergement Hostinger.
+5. `obsidian/02 - Guide technique pour développeurs.md` — contraintes d'hébergement Hostinger.
 
 **Ne prends aucune décision d'architecture qui contredit ces documents.** Si une question ouverte bloque, demande — ne devine pas.
 
