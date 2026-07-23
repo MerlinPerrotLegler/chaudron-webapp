@@ -1,6 +1,7 @@
 import type { Provenance } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { AppError } from '@/lib/errors';
+import { emit } from '@/lib/webhooks';
 import type { MatiereCreateInput, MatiereUpdateInput } from '@/lib/validation/matiere';
 
 export async function createMatiere(input: MatiereCreateInput) {
@@ -11,7 +12,9 @@ export async function createMatiere(input: MatiereCreateInput) {
   if (existing) {
     throw new AppError('conflict', `Une matière nommée « ${input.nom} » existe déjà`, 409);
   }
-  return prisma.matiere.create({ data: input });
+  const m = await prisma.matiere.create({ data: input });
+  await emit('matiere.creee', m);
+  return m;
 }
 
 export async function listMatieres(params: {

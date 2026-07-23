@@ -1,12 +1,15 @@
 import { prisma } from '@/lib/prisma';
+import { emit } from '@/lib/webhooks';
 import { getMatiere } from './matiere';
 import type { PrixCreateInput } from '@/lib/validation/prix';
 
 export async function addPrix(matiereId: number, input: PrixCreateInput) {
   await getMatiere(matiereId);
-  return prisma.matierePrix.create({
+  const p = await prisma.matierePrix.create({
     data: { matiereId, date: new Date(input.date), prix: input.prix },
   });
+  await emit('matiere.prix_ajoute', { matiereId, date: input.date, prix: input.prix });
+  return p;
 }
 
 export async function listPrix(matiereId: number) {
