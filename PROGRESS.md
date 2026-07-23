@@ -7,7 +7,7 @@
 >
 > **Ordre d’implémentation** : socle technique minimal → **A → E → D → C → B → F** ; T/S en continu / en fin ; **login/session (G1) en dernier**. Branche de travail : **`main`** (commits atomiques).
 
-**Dernière mise à jour** : 2026-07-23 (merge main ; Plan A2 rédigé ; login en dernier)
+**Dernière mise à jour** : 2026-07-23 (Plan A2 code livré ; MySQL distant OK)
 
 ---
 
@@ -16,8 +16,8 @@
 | Volet | Avancement | Commentaire |
 |-------|------------|-------------|
 | **Spécification** | **~98 %** | Specs A→G + T + S rédigées ; reste polish mineur / questions mineures |
-| **Implémentation code** | **~8 %** | Plan Catalogue **A1** livré (branche `feat/catalogue-plan-1`) ; auth session G1 pas encore |
-| **Projet V1 (pondéré)** | **~26 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×8 ≈ 26 %` |
+| **Implémentation code** | **~12 %** | A1 + **A2 Recettes** livrés sur `main` ; MySQL distant migré ; auth G1 plus tard |
+| **Projet V1 (pondéré)** | **~29 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×12 ≈ 29 %` |
 
 > Mettre à jour la ligne **Implémentation** et le **total pondéré** à chaque fin de plan (G1, A1…).
 
@@ -35,7 +35,7 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 |-------|---------|------:|-----:|-------------:|
 | **P0** | Specs & cadrage (déjà faits — hors poids code) | — | 98 % | — |
 | **P1** | Socle app + auth + webhooks (**G1–G3**) + shell UI minimal | 10 % | ~45 % | ~4,5 |
-| **P2** | Catalogue API (**A** plans 1–3) | 12 % | ~35 % | ~4,2 |
+| **P2** | Catalogue API (**A** plans 1–3) | 12 % | ~70 % | ~8,4 |
 | **P3** | Culture (**E1–E4**) | 16 % | 0 % | 0 |
 | **P4** | Stock (**D1–D4**) | 11 % | 0 % | 0 |
 | **P5** | Production & traçabilité (**C1–C4**) | 12 % | 0 % | 0 |
@@ -43,14 +43,14 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | 0 % | 0 |
 | **P8** | Planification (**F1–F5**) | 7 % | 0 % | 0 |
 | **P9** | Transverses (**T1–T5**) + Réglages (**S1–S4**) + uploads/search **G5** | 7 % | 0 % | 0 |
-| | **Total implémentation** | **100 %** | | **~8 %** |
+| | **Total implémentation** | **100 %** | | **~12 %** |
 
 ### Détail par domaine (plans)
 
 | Domaine | Plans | Poids | Fait | Notes |
 |---------|-------|------:|-----:|-------|
 | **G** Plateforme | G1 Auth · G2 API keys · G3 Webhooks · G4 Storefront · G5 Uploads/search | 12 % | ~20 % | Health + `x-api-key` + emit fichier JSON ; **pas** encore login/sessions/ApiKey table |
-| **A** Catalogue | A1 Matières ✅ · A2 Recettes · A3 Cond./Produits · A4 UI | 14 % | ~30 % | A1 code sur `feat/catalogue-plan-1` (22 tests) |
+| **A** Catalogue | A1 Matières ✅ · A2 Recettes ✅ · A3 Cond./Produits · A4 UI | 14 % | ~60 % | 38 tests ; reste A3 |
 | **E** Culture | E1 Parcelles/Planches · E2 Espèces · E3 Lots/cascade · E4 Récoltes · E5 UI | 18 % | 0 % | Plus gros bloc métier interactif |
 | **D** Stock | D1 Lots/mvt · D2 Achats · D3 Récolte/ajust. · D4 Produits/FIFO · D5 UI | 12 % | 0 % | |
 | **C** Production | C1 Transfo · C2 Prod · C3 Avancement · C4 Traçabilité · C5 UI | 13 % | 0 % | Dépend D+E |
@@ -118,7 +118,7 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 ### Plans d’implémentation Catalogue
 
 - [x] Plan 1 — Fondations & API Matières — **code livré** (CRUD + prix + webhooks + tests)
-- [x] Plan 2 — Recettes — *plan rédigé* (`A - Catalogue — Plan 2 (Recettes).md`) — code à faire
+- [x] Plan 2 — Recettes — **code livré** (CRUD, ingrédients, étapes, coût, dupliquer)
 - [ ] Plan 3 — Conditionnements + Produits finis (revient, marge, recette simple)
 - [ ] Plan 4 — Écrans back-office Catalogue
 - [ ] Plan 5 — Auth multi-utilisateur + doc API/webhooks → **absorbé par G1–G3** ([[G - Plateforme (spec)]])
@@ -358,9 +358,9 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 
 ## Prochaine étape suggérée
 
-1. Renseigner **`.env`** / **`.env.test`** avec le MySQL **distant** (hPanel) — 2 bases : `chaudron` + `chaudron_test`.
-2. Exécuter **Plan A2 Recettes** sur `main` (commits atomiques).
-3. **G1 login** seulement en fin de parcours métier.
+1. Rédiger + exécuter **Plan A3** (conditionnements + produits finis / revient / marge).
+2. Optionnel : 2ᵉ base MySQL distante `…_test` pour faire tourner Vitest hors localhost.
+3. **G1 login** en dernier.
 
 ---
 
@@ -385,3 +385,4 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | 2026-07-23 | Roadmap d’**implémentation** + % (phases P1–P9, jalons J1–J8, avancement global) |
 | 2026-07-23 | **Plan Catalogue 1 code** : scaffold, Prisma, API Matières, webhooks ; ~8 % impl ; branche `feat/catalogue-plan-1` |
 | 2026-07-23 | Merge Plan 1 → **`main`** ; login reporté en dernier ; Plan A2 rédigé ; `.env` distant à renseigner |
+| 2026-07-23 | MySQL distant OK + migrate ; **Plan A2 code** (38 tests) ; ~12 % impl |
