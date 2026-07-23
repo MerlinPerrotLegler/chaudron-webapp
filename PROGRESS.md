@@ -7,7 +7,7 @@
 >
 > **Ordre d’implémentation** : socle technique minimal → **A → E → D → C → B → F** ; T/S en continu / en fin ; **login/session (G1) en dernier**. Branche de travail : **`main`** (commits atomiques).
 
-**Dernière mise à jour** : 2026-07-24 (E1 terrain livré ; .env.test distant OK)
+**Dernière mise à jour** : 2026-07-24 (Culture E1–E4 API livrée)
 
 ---
 
@@ -16,8 +16,8 @@
 | Volet | Avancement | Commentaire |
 |-------|------------|-------------|
 | **Spécification** | **~98 %** | Specs A→G + T + S rédigées ; reste polish mineur / questions mineures |
-| **Implémentation code** | **~22 %** | Catalogue A1–A3 + **Culture E1** (50 tests) ; `.env.test` distant |
-| **Projet V1 (pondéré)** | **~37 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×22 ≈ 37 %` |
+| **Implémentation code** | **~38 %** | Catalogue + **Culture E1–E4** API (53 tests) |
+| **Projet V1 (pondéré)** | **~50 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×38 ≈ 50 %` |
 
 > Mettre à jour la ligne **Implémentation** et le **total pondéré** à chaque fin de plan (G1, A1…).
 
@@ -36,14 +36,14 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | **P0** | Specs & cadrage (déjà faits — hors poids code) | — | 98 % | — |
 | **P1** | Socle app + auth + webhooks (**G1–G3**) + shell UI minimal | 10 % | ~45 % | ~4,5 |
 | **P2** | Catalogue API (**A** plans 1–3) | 12 % | **100 %** | 12 |
-| **P3** | Culture (**E1–E4**) | 16 % | ~25 % | ~4 |
+| **P3** | Culture (**E1–E4**) | 16 % | **100 %** | 16 |
 | **P4** | Stock (**D1–D4**) | 11 % | 0 % | 0 |
 | **P5** | Production & traçabilité (**C1–C4**) | 12 % | 0 % | 0 |
 | **P6** | Commercial (**B1–B4**) | 13 % | 0 % | 0 |
 | **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | 0 % | 0 |
 | **P8** | Planification (**F1–F5**) | 7 % | 0 % | 0 |
 | **P9** | Transverses (**T1–T5**) + Réglages (**S1–S4**) + uploads/search **G5** | 7 % | 0 % | 0 |
-| | **Total implémentation** | **100 %** | | **~22 %** |
+| | **Total implémentation** | **100 %** | | **~38 %** |
 
 ### Détail par domaine (plans)
 
@@ -51,7 +51,7 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 |---------|-------|------:|-----:|-------|
 | **G** Plateforme | G1 Auth · G2 API keys · G3 Webhooks · G4 Storefront · G5 Uploads/search | 12 % | ~20 % | Health + `x-api-key` + emit fichier JSON ; **pas** encore login/sessions/ApiKey table |
 | **A** Catalogue | A1–A3 ✅ · A4 UI | 14 % | ~85 % | API complète ; reste UI A4 |
-| **E** Culture | E1 ✅ · E2 Espèces · E3 Lots · E4 Récoltes · E5 UI | 18 % | ~20 % | Terrain + journals |
+| **E** Culture | E1–E4 ✅ · E5 UI | 18 % | ~80 % | API complète ; reste UI |
 | **D** Stock | D1 Lots/mvt · D2 Achats · D3 Récolte/ajust. · D4 Produits/FIFO · D5 UI | 12 % | 0 % | |
 | **C** Production | C1 Transfo · C2 Prod · C3 Avancement · C4 Traçabilité · C5 UI | 13 % | 0 % | Dépend D+E |
 | **B** Commercial | B1 Clients/PdV · B2 Intentions · B3 Commandes · B4 Livrer · B5 Ventes/UI | 14 % | 0 % | |
@@ -146,10 +146,10 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 
 ### Plans
 
-- [x] Plan E1 — Parcelles + Planches + journals + images méta + historique — **code livré**
-- [ ] Plan E2 — Espèces + itinéraires (jours) + associations/risques/faisabilité
-- [ ] Plan E3 — Lots (planche) + cascade (jours) + conflits + API planning
-- [ ] Plan E4 — Récoltes multi-sessions / campagnes + webhook (+ branchement stock D)
+- [x] Plan E1 — Parcelles + Planches + journals — **code livré**
+- [x] Plan E2 — Espèces + itinéraires + assoc/risques/faisabilité — **code livré**
+- [x] Plan E3 — Lots + cascade + conflits + planning — **code livré**
+- [x] Plan E4 — Récoltes multi-sessions + webhook (stub stock D) — **code livré**
 - [ ] Plan E5 — Écrans back-office Culture
 
 ---
@@ -358,8 +358,9 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 
 ## Prochaine étape suggérée
 
-1. **Plan E2** — Espèces + itinéraires (jours) + associations/risques/faisabilité.
-2. **G1 login** en dernier.
+1. **Stock D1–D4** (lots, mouvements, achats, FIFO).
+2. Puis Production C / Commercial B.
+3. **G1 login** en dernier.
 
 ---
 
@@ -387,3 +388,4 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | 2026-07-23 | MySQL distant OK + migrate ; **Plan A2 code** (38 tests) ; ~12 % impl |
 | 2026-07-24 | **Plan A3 code** (conditionnements, produits, revient, recette simple) ; 45 tests ; ~16 % impl |
 | 2026-07-24 | `.env.test` distant OK (`%21`) ; **Culture E1** (parcelles/planches/journals) ; 50 tests ; ~22 % impl |
+| 2026-07-24 | **Culture E2–E4** (espèces, lots/cascade, récoltes) ; 53 tests ; ~38 % impl / ~50 % V1 |
