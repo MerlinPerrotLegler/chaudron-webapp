@@ -4,17 +4,8 @@ import { AppError } from '@/lib/errors';
 import { emit } from '@/lib/webhooks';
 import { parseDateOnly } from '@/lib/dates';
 import { getLot, updateLot } from './lotCulture';
+import { entrerMatiereDepuisRecolte } from './stock';
 import type { RecolteCreateInput } from '@/lib/validation/lot';
-
-/** Stub Stock (domaine D) — no-op tant que D n’existe pas. */
-export async function stubEntreeStockDepuisRecolte(_payload: {
-  matiereId: number;
-  poidsKg: number;
-  date: string;
-  recolteId: number;
-}): Promise<number | null> {
-  return null;
-}
 
 export async function declareRecolte(input: RecolteCreateInput) {
   const lot = await getLot(input.lotId);
@@ -35,8 +26,6 @@ export async function declareRecolte(input: RecolteCreateInput) {
     );
   }
 
-  const campagneId = input.campagneId ?? undefined;
-
   const r = await prisma.recolte.create({
     data: {
       lotId: input.lotId,
@@ -50,24 +39,26 @@ export async function declareRecolte(input: RecolteCreateInput) {
       datePeremption: input.datePeremption
         ? parseDateOnly(input.datePeremption)
         : undefined,
-      campagneId,
+      campagneId: input.campagneId,
       notes: input.notes,
       operateurNom: input.operateurNom,
     },
   });
 
-  const stockId = await stubEntreeStockDepuisRecolte({
+  const stockLot = await entrerMatiereDepuisRecolte({
     matiereId: input.matiereId,
-    poidsKg: input.poidsKg,
+    quantite: input.poidsKg,
     date: input.date,
+    datePeremption: input.datePeremption,
+    numerosSacs: input.numerosSacs,
     recolteId: r.id,
+    operateurNom: input.operateurNom,
   });
-  if (stockId != null) {
-    await prisma.recolte.update({
-      where: { id: r.id },
-      data: { stockMouvementId: stockId },
-    });
-  }
+
+  await prisma.recolte.update({
+    where: { id: r.id },
+    data: { stockMouvementId: stockLot.id },
+  });
 
   if (lot.etat !== 'en_recolte' && lot.etat !== 'termine' && lot.etat !== 'abandonne') {
     await updateLot(lot.id, { etat: 'en_recolte' });
@@ -84,6 +75,7 @@ export async function declareRecolte(input: RecolteCreateInput) {
     emplacement: r.emplacement,
     date_peremption: input.datePeremption,
     notes: r.notes,
+    stock_lot_id: stockLot.id,
   });
 
   return prisma.recolte.findUniqueOrThrow({ where: { id: r.id } });

@@ -259,6 +259,7 @@ model Matiere {
   fournisseur  String?
   lien         String?
   prixVenteKg  Float?
+  stockMini    Float?
   especeId     Int?
   espece       Espece?             @relation(fields: [especeId], references: [id])
   archivee     Boolean             @default(false)
@@ -267,6 +268,8 @@ model Matiere {
   prix         MatierePrix[]
   ingredients  RecetteIngredient[]
   recoltes     Recolte[]
+  lotsStock    LotStockMatiere[]
+  achats       Achat[]
 }
 
 model MatierePrix {
@@ -372,15 +375,18 @@ model ProduitFini {
   conditionnement   Conditionnement @relation(fields: [conditionnementId], references: [id])
   poidsUnite        Float
   prixVenteUnite    Float?
+  stockMini         Float?
   actif             Boolean         @default(true)
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
+  lotsStock         LotStockProduit[]
 }
 
 model Parametres {
   id                    Int     @id @default(1)
   tauxHoraireMainOeuvre Float   @default(0)
   inclureMo             Boolean @default(true)
+  seuilJoursAlerteDluo  Int     @default(30)
 }
 
 // ——— Domaine E : Culture (Plan E1) ———
@@ -493,3 +499,136 @@ model PlancheJour {
 
   @@id([plancheId, date])
 }
+
+// ——— Domaine D : Stock ———
+
+enum SourceLotMatiere {
+  recolte
+  achat
+  transformation
+  ajustement
+  transfert
+}
+
+enum SourceLotProduit {
+  production
+  ajustement
+  transfert
+}
+
+enum SensMouvement {
+  entree
+  sortie
+  ajustement
+  transfert
+}
+
+enum CibleMouvement {
+  matiere
+  produit
+}
+
+model Emplacement {
+  id        Int               @id @default(autoincrement())
+  nom       String            @unique
+  notes     String?
+  archive   Boolean           @default(false)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  lotsMatiere LotStockMatiere[]
+  lotsProduit LotStockProduit[]
+  achats    Achat[]
+  mouvements Mouvement[]
+}
+
+model LotStockMatiere {
+  id                Int              @id @default(autoincrement())
+  matiereId         Int
+  matiere           Matiere          @relation(fields: [matiereId], references: [id])
+  emplacementId     Int?
+  emplacement       Emplacement?     @relation(fields: [emplacementId], references: [id])
+  quantiteInitiale  Float
+  quantiteRestante  Float
+  unite             UniteAchat
+  dateEntree        DateTime         @db.Date
+  datePeremption    DateTime?        @db.Date
+  numerosSacs       Json?
+  coutUnitaire      Float?
+  sourceType        SourceLotMatiere
+  sourceId          Int?
+  recolteId         Int?
+  achatId           Int?             @unique
+  achat             Achat?           @relation(fields: [achatId], references: [id])
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  mouvements        Mouvement[]
+
+  @@index([matiereId, quantiteRestante])
+  @@index([datePeremption])
+}
+
+model LotStockProduit {
+  id                  Int              @id @default(autoincrement())
+  produitFiniId       Int
+  produitFini         ProduitFini      @relation(fields: [produitFiniId], references: [id])
+  emplacementId       Int?
+  emplacement         Emplacement?     @relation(fields: [emplacementId], references: [id])
+  quantiteInitiale    Float
+  quantiteRestante    Float
+  dateEntree          DateTime         @db.Date
+  datePeremption      DateTime?        @db.Date
+  numeroLotProduction String?
+  poidsKg             Float?
+  notes               String?          @db.Text
+  sourceType          SourceLotProduit
+  sourceId            Int?
+  productionId        Int?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  mouvements          Mouvement[]
+
+  @@index([produitFiniId, quantiteRestante])
+}
+
+model Mouvement {
+  id            Int            @id @default(autoincrement())
+  date          DateTime       @db.Date
+  sens          SensMouvement
+  cible         CibleMouvement
+  lotMatiereId  Int?
+  lotMatiere    LotStockMatiere? @relation(fields: [lotMatiereId], references: [id])
+  lotProduitId  Int?
+  lotProduit    LotStockProduit? @relation(fields: [lotProduitId], references: [id])
+  quantite      Float
+  emplacementId Int?
+  emplacement   Emplacement?   @relation(fields: [emplacementId], references: [id])
+  motif         String?
+  operateurNom  String?
+  refType       String?
+  refId         Int?
+  createdAt     DateTime       @default(now())
+
+  @@index([date])
+  @@index([lotMatiereId])
+  @@index([lotProduitId])
+}
+
+model Achat {
+  id                   Int              @id @default(autoincrement())
+  matiereId            Int
+  matiere              Matiere          @relation(fields: [matiereId], references: [id])
+  date                 DateTime         @db.Date
+  quantite             Float
+  prixUnitaire         Float
+  devise               String           @default("EUR")
+  fournisseur          String?
+  lien                 String?
+  emplacementId        Int?
+  emplacement          Emplacement?     @relation(fields: [emplacementId], references: [id])
+  datePeremption       DateTime?        @db.Date
+  ajouterPrixCatalogue Boolean          @default(true)
+  operateurNom         String?
+  createdAt            DateTime         @default(now())
+  lotStockMatiere      LotStockMatiere?
+}
+
