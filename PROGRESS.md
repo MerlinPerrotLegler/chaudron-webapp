@@ -1,26 +1,91 @@
-# PROGRESS — Spécification chaudron-webapp
+# PROGRESS — chaudron-webapp
 
-> Suivi de la **spécification** (pas de l’implémentation). Cocher une ligne quand le livrable correspondant existe et est suffisamment détaillé pour servir de base à un plan d’implémentation.
+> Suivi de la **spécification** et de l’**implémentation**.  
+> Cocher les lignes au fur et à mesure. Les **% sont indicatifs** (ordre de grandeur d’effort V1), à recalculer quand un plan passe à « fait ».
 >
-> **Convention** : pas de PR pour ce travail documentaire. Mettre à jour ce fichier à chaque avancée.
+> **Convention** : pas de PR obligatoires pour le doc. Commits atomiques en français dès le code.
 >
-> **Ordre de construction** (cf. `obsidian/00 - Cas d'utilisation.md` §4) : A → E → D → C → B → F ; G transverse dès A.
+> **Ordre d’implémentation** : G (socle) dès le début → A → E → D → C → B → F ; T/S en continu / en fin.
 
-**Dernière mise à jour** : 2026-07-23 (transverses T + settings S)
+**Dernière mise à jour** : 2026-07-23 (planif. implémentation + %)
 
 ---
 
-## Légende
+## Avancement global (indicatif)
+
+| Volet | Avancement | Commentaire |
+|-------|------------|-------------|
+| **Spécification** | **~98 %** | Specs A→G + T + S rédigées ; reste polish mineur / questions mineures |
+| **Implémentation code** | **~0 %** | Pas encore de `src/` / app exécutable |
+| **Projet V1 (pondéré)** | **~20 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×0 ≈ 20 %` |
+
+> Mettre à jour la ligne **Implémentation** et le **total pondéré** à chaque fin de plan (G1, A1…).
+
+---
+
+## Planification d’implémentation (roadmap + poids)
+
+Poids = part approximative de l’effort d’implémentation V1 (total **100 %**).  
+`Fait` = avancement **dans** ce bloc (0–100 %).  
+`Contribution` = `poids × fait` (points vers le total implémentation).
+
+### Ordre recommandé (phases)
+
+| Phase | Contenu | Poids | Fait | Contribution |
+|-------|---------|------:|-----:|-------------:|
+| **P0** | Specs & cadrage (déjà faits — hors poids code) | — | 98 % | — |
+| **P1** | Socle app + auth + webhooks (**G1–G3**) + shell UI minimal | 10 % | 0 % | 0 |
+| **P2** | Catalogue API (**A** plans 1–3) | 12 % | 0 % | 0 |
+| **P3** | Culture (**E1–E4**) | 16 % | 0 % | 0 |
+| **P4** | Stock (**D1–D4**) | 11 % | 0 % | 0 |
+| **P5** | Production & traçabilité (**C1–C4**) | 12 % | 0 % | 0 |
+| **P6** | Commercial (**B1–B4**) | 13 % | 0 % | 0 |
+| **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | 0 % | 0 |
+| **P8** | Planification (**F1–F5**) | 7 % | 0 % | 0 |
+| **P9** | Transverses (**T1–T5**) + Réglages (**S1–S4**) + uploads/search **G5** | 7 % | 0 % | 0 |
+| | **Total implémentation** | **100 %** | | **~0 %** |
+
+### Détail par domaine (plans)
+
+| Domaine | Plans | Poids | Fait | Notes |
+|---------|-------|------:|-----:|-------|
+| **G** Plateforme | G1 Auth · G2 API keys · G3 Webhooks · G4 Storefront · G5 Uploads/search | 12 % | 0 % | G1–G3 dans P1 ; G4 dans P7 ; G5 dans P9 |
+| **A** Catalogue | A1 Matières *(plan rédigé)* · A2 Recettes · A3 Cond./Produits · A4 UI | 14 % | 0 % | A1 déjà découpé TDD dans obsidian |
+| **E** Culture | E1 Parcelles/Planches · E2 Espèces · E3 Lots/cascade · E4 Récoltes · E5 UI | 18 % | 0 % | Plus gros bloc métier interactif |
+| **D** Stock | D1 Lots/mvt · D2 Achats · D3 Récolte/ajust. · D4 Produits/FIFO · D5 UI | 12 % | 0 % | |
+| **C** Production | C1 Transfo · C2 Prod · C3 Avancement · C4 Traçabilité · C5 UI | 13 % | 0 % | Dépend D+E |
+| **B** Commercial | B1 Clients/PdV · B2 Intentions · B3 Commandes · B4 Livrer · B5 Ventes/UI | 14 % | 0 % | |
+| **F** Planification | F1–F5 | 7 % | 0 % | En dernier |
+| **T** Transverses | T1–T5 | 5 % | 0 % | Dashboard tôt possible (T1 partiel) |
+| **S** Réglages | S1–S4 | 5 % | 0 % | Apparence tôt = gain UX |
+| | | **100 %** | | |
+
+### Jalons « utilisable »
+
+| Jalon | Quand (indicatif) | % impl. cumulé approx. |
+|-------|-------------------|------------------------:|
+| **J1** App tourne + login + health | fin P1 | ~10 % |
+| **J2** CRUD matières/recettes/produits (API) | fin P2 | ~22 % |
+| **J3** Culture + récoltes (API) | fin P3 | ~38 % |
+| **J4** Stock + achats + lien récolte | fin P4 | ~49 % |
+| **J5** Prod / séchage / traçabilité | fin P5 | ~61 % |
+| **J6** Ventes + commandes + clients | fin P6 | ~74 % |
+| **J7** Back-office + storefront utilisables | fin P7 | ~86 % |
+| **J8** Planif + stats + settings + import | fin P8–P9 | **~100 %** |
+
+---
+
+## Légende (spécification)
 
 | Symbole | Sens |
 |---------|------|
-| `[x]` | Spec rédigée (brouillon acceptable si cohérent avec D1–D18) |
+| `[x]` | Spec / plan rédigé ou item fait |
 | `[ ]` | À faire |
-| `~` | Partiellement couvert (noter ce qui manque) |
+| `~` | Partiellement couvert |
 
 **Livrables types par domaine** :
-1. **Spec** (`obsidian/<Lettre> - <Domaine> (spec).md`) — modèle de données, règles, API, écrans, webhooks, hors périmètre.
-2. **Plan(s) d’implémentation** — découpage TDD tâche par tâche (optionnel tant que la spec n’est pas stable ; requis avant code).
+1. **Spec** — modèle, règles, API, écrans, webhooks.
+2. **Plan(s) d’implémentation** — découpage TDD ; puis code + tests.
 
 ---
 
@@ -64,8 +129,6 @@
 
 > Dépend de A (matière ↔ espèce). Demande forte (planning + cascade).
 > Spec métier : `obsidian/E - Culture (spec).md`
-
-### Spec métier
 
 ### Spec métier
 
@@ -295,10 +358,9 @@
 
 ## Prochaine étape suggérée
 
-La **spécification métier + transverse + settings** est complète.
-
-1. Commencer l’**implémentation** (Catalogue Plan 1 / G1 auth), **ou**
-2. Relire / valider une spec précise avant code.
+1. Démarrer **P1** : scaffold Next.js + **G1** auth (voir aussi Catalogue Plan 1 pour le harnais de test).
+2. Enchaîner **P2** Catalogue API (Plan A1 déjà écrit).
+3. Après chaque plan terminé : mettre à jour les colonnes **Fait** / **Contribution** et l’**avancement global**.
 
 ---
 
@@ -320,3 +382,4 @@ La **spécification métier + transverse + settings** est complète.
 | 2026-07-23 | Spec `G - Plateforme (spec).md` ; plans G1–G5 ; Q-G3 acté (pas de retry auto) |
 | 2026-07-23 | Spec `F - Planification (spec).md` ; plans F1–F5 ; UC-F1.5 tranché (CF-8) |
 | 2026-07-23 | Specs `T - Transverses` + `S - Réglages & apparence` ; Q-T4/T6 tranchés |
+| 2026-07-23 | Roadmap d’**implémentation** + % (phases P1–P9, jalons J1–J8, avancement global) |
