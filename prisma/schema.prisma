@@ -191,3 +191,113 @@ model Parametres {
   tauxHoraireMainOeuvre Float   @default(0)
   inclureMo             Boolean @default(true)
 }
+
+// ——— Domaine E : Culture (Plan E1) ———
+
+enum VocationParcelle {
+  serre_semis
+  tunnel
+  frais
+  maraichage
+  draine_ensoleille
+  grande_culture
+  autre
+}
+
+enum TypeEntrant {
+  compost
+  amendement
+  fertilisation
+  phyto
+  irrigation
+  semence_plant
+  autre
+}
+
+model Parcelle {
+  id             Int               @id @default(autoincrement())
+  code           String            @unique
+  vocation       VocationParcelle
+  typeSol        String?
+  ph             Float?
+  drainage       String?
+  pierrosite     String?
+  exposition     String?
+  pente          String?
+  particularites String?           @db.Text
+  surfaceM2      Float?
+  archivee       Boolean           @default(false)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  planches       Planche[]
+}
+
+model Planche {
+  id             Int            @id @default(autoincrement())
+  parcelleId     Int
+  parcelle       Parcelle       @relation(fields: [parcelleId], references: [id])
+  numero         String
+  code           String         @unique
+  surfaceM2      Float
+  particularites String?        @db.Text
+  archivee       Boolean        @default(false)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  travauxSol     TravailSol[]
+  entrants       Entrant[]
+  images         PlancheImage[]
+  jours          PlancheJour[]
+
+  @@unique([parcelleId, numero])
+}
+
+model TravailSol {
+  id          Int      @id @default(autoincrement())
+  plancheId   Int
+  planche     Planche  @relation(fields: [plancheId], references: [id])
+  date        DateTime @db.Date
+  type        String
+  description String?  @db.Text
+  operateurNom String?
+  createdAt   DateTime @default(now())
+
+  @@index([plancheId, date])
+}
+
+model Entrant {
+  id              Int         @id @default(autoincrement())
+  plancheId       Int
+  planche         Planche     @relation(fields: [plancheId], references: [id])
+  date            DateTime    @db.Date
+  type            TypeEntrant
+  produit         String
+  quantite        Float?
+  unite           String?
+  refGaine        String?
+  refSemencePlant String?
+  operateurNom    String?
+  createdAt       DateTime    @default(now())
+
+  @@index([plancheId, date])
+}
+
+model PlancheImage {
+  id            Int      @id @default(autoincrement())
+  plancheId     Int
+  planche       Planche  @relation(fields: [plancheId], references: [id])
+  cheminFichier String
+  legende       String?
+  ordre         Int      @default(0)
+  uploadedAt    DateTime @default(now())
+
+  @@index([plancheId])
+}
+
+model PlancheJour {
+  plancheId Int
+  planche   Planche  @relation(fields: [plancheId], references: [id])
+  date      DateTime @db.Date
+  notes     String   @db.Text
+
+  @@id([plancheId, date])
+}

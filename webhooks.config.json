@@ -7,5 +7,10 @@
   "conditionnement.maj": [],
   "produit.cree": [],
   "produit.maj": [],
-  "produit.desactive": []
+  "produit.desactive": [],
+  "parcelle.creee": [],
+  "parcelle.maj": [],
+  "planche.creee": [],
+  "planche.maj": [],
+  "planche.entrant_ajoute": []
 }

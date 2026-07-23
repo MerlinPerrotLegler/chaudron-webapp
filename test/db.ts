@@ -14,4 +14,10 @@ export async function resetDb() {
   await prisma.categorieReglementaire.deleteMany();
   await prisma.equipement.deleteMany();
   await prisma.parametres.deleteMany();
+  await prisma.plancheImage.deleteMany();
+  await prisma.plancheJour.deleteMany();
+  await prisma.travailSol.deleteMany();
+  await prisma.entrant.deleteMany();
+  await prisma.planche.deleteMany();
+  await prisma.parcelle.deleteMany();
 }
