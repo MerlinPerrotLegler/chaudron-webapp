@@ -56,7 +56,7 @@ Chaîne de traçabilité **obligatoire** : **Parcelle → Récolte → Transform
 
 ## 6. Décisions structurantes (résumé — détail dans le doc Décisions)
 
-- Modèle temporel : **année civile / 52 semaines**.
+- **Modèle temporel** : **année civile** ; dans **Culture**, maille opérationnelle = **jour** (dates + durées en jours) — voir D2 précisé / CE-2.
 - **Transformation primaire** (séchage, distillation…) = opération tracée distincte de la production par recette.
 - **Multi-utilisateur** ; opérateur tracé sur les actions.
 - **Parcelle** = unité de base (pas d'entité « espace »), code `[A-Z]+-[0-9]{2,3}`.
