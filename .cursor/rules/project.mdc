@@ -1,0 +1,30 @@
+---
+description: Règles projet chaudron-webapp (contexte, stack, conventions)
+globs:
+alwaysApply: true
+---
+
+# chaudron-webapp — règles projet
+
+La référence complète vit dans **`AI.md`** (racine). Lis-le avant toute contribution.
+
+## Contexte
+App de gestion de la ferme PPAM « Le Chaudron qui sent bon ». Docs de cadrage dans `obsidian/` (cas d'usage, décisions **D1–D18**, spec + plan du domaine en cours). Ne rien décider qui contredise ces documents ; en cas de blocage, demander.
+
+## Stack (non négociable)
+Next.js 14 (App Router) · TypeScript · Prisma + MySQL (pas de SQLite) · Zod · Vitest · Node 20.
+
+## Architecture
+- API-first **REST** ; erreurs normalisées `{ code, message, details? }` ; incohérence d'intégrité → **HTTP 409**.
+- Logique métier dans `src/services/*` (fonctions testables sans HTTP) ; Route Handlers (`src/app/api/**`) minces (auth + validation Zod + délégation).
+- Webhooks configurables (`nom.du.hook → [urls]`), contrats versionnés.
+- Intégrité garantie : noms uniques, **archivage** au lieu de suppression, renommage propagé par `id`.
+
+## Conventions
+- **TDD strict** : test qui échoue → implémentation minimale → test vert → commit.
+- **DRY, YAGNI** ; fichiers focalisés (une responsabilité).
+- Commits atomiques **en français** : `feat:` / `fix:` / `chore:`.
+- **Jamais de secret commité** (`.env*` gitignoré ; secrets via variables d'env / hPanel Hostinger).
+
+## Vocabulaire du domaine (à employer tel quel)
+Produit fini · Matière fermière 🟢 · Matière d'importation 🟠 · Consommable de base ⚪ · « Matière » = générique avec champ `provenance` (`fermiere`/`importation`/`base`).

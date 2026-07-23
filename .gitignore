@@ -1,0 +1,32 @@
+# Dépendances
+node_modules/
+
+# Build Next.js
+.next/
+out/
+build/
+dist/
+
+# Variables d'environnement (jamais commiter de secret)
+.env
+.env.*
+!.env.example
+
+# Tests / couverture
+coverage/
+
+# Prisma (bases locales éventuelles)
+prisma/*.db
+prisma/*.db-journal
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Divers
+.DS_Store
+*.log
+.vercel
+.idea/
+.vscode/*
+!.vscode/extensions.json
