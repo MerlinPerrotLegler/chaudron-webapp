@@ -7,7 +7,7 @@
 >
 > **Ordre d’implémentation** : G (socle) dès le début → A → E → D → C → B → F ; T/S en continu / en fin.
 
-**Dernière mise à jour** : 2026-07-23 (planif. implémentation + %)
+**Dernière mise à jour** : 2026-07-23 (Plan Catalogue 1 code livré)
 
 ---
 
@@ -16,8 +16,8 @@
 | Volet | Avancement | Commentaire |
 |-------|------------|-------------|
 | **Spécification** | **~98 %** | Specs A→G + T + S rédigées ; reste polish mineur / questions mineures |
-| **Implémentation code** | **~0 %** | Pas encore de `src/` / app exécutable |
-| **Projet V1 (pondéré)** | **~20 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×0 ≈ 20 %` |
+| **Implémentation code** | **~8 %** | Plan Catalogue **A1** livré (branche `feat/catalogue-plan-1`) ; auth session G1 pas encore |
+| **Projet V1 (pondéré)** | **~26 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×8 ≈ 26 %` |
 
 > Mettre à jour la ligne **Implémentation** et le **total pondéré** à chaque fin de plan (G1, A1…).
 
@@ -34,8 +34,8 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | Phase | Contenu | Poids | Fait | Contribution |
 |-------|---------|------:|-----:|-------------:|
 | **P0** | Specs & cadrage (déjà faits — hors poids code) | — | 98 % | — |
-| **P1** | Socle app + auth + webhooks (**G1–G3**) + shell UI minimal | 10 % | 0 % | 0 |
-| **P2** | Catalogue API (**A** plans 1–3) | 12 % | 0 % | 0 |
+| **P1** | Socle app + auth + webhooks (**G1–G3**) + shell UI minimal | 10 % | ~45 % | ~4,5 |
+| **P2** | Catalogue API (**A** plans 1–3) | 12 % | ~35 % | ~4,2 |
 | **P3** | Culture (**E1–E4**) | 16 % | 0 % | 0 |
 | **P4** | Stock (**D1–D4**) | 11 % | 0 % | 0 |
 | **P5** | Production & traçabilité (**C1–C4**) | 12 % | 0 % | 0 |
@@ -43,14 +43,14 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | 0 % | 0 |
 | **P8** | Planification (**F1–F5**) | 7 % | 0 % | 0 |
 | **P9** | Transverses (**T1–T5**) + Réglages (**S1–S4**) + uploads/search **G5** | 7 % | 0 % | 0 |
-| | **Total implémentation** | **100 %** | | **~0 %** |
+| | **Total implémentation** | **100 %** | | **~8 %** |
 
 ### Détail par domaine (plans)
 
 | Domaine | Plans | Poids | Fait | Notes |
 |---------|-------|------:|-----:|-------|
-| **G** Plateforme | G1 Auth · G2 API keys · G3 Webhooks · G4 Storefront · G5 Uploads/search | 12 % | 0 % | G1–G3 dans P1 ; G4 dans P7 ; G5 dans P9 |
-| **A** Catalogue | A1 Matières *(plan rédigé)* · A2 Recettes · A3 Cond./Produits · A4 UI | 14 % | 0 % | A1 déjà découpé TDD dans obsidian |
+| **G** Plateforme | G1 Auth · G2 API keys · G3 Webhooks · G4 Storefront · G5 Uploads/search | 12 % | ~20 % | Health + `x-api-key` + emit fichier JSON ; **pas** encore login/sessions/ApiKey table |
+| **A** Catalogue | A1 Matières ✅ · A2 Recettes · A3 Cond./Produits · A4 UI | 14 % | ~30 % | A1 code sur `feat/catalogue-plan-1` (22 tests) |
 | **E** Culture | E1 Parcelles/Planches · E2 Espèces · E3 Lots/cascade · E4 Récoltes · E5 UI | 18 % | 0 % | Plus gros bloc métier interactif |
 | **D** Stock | D1 Lots/mvt · D2 Achats · D3 Récolte/ajust. · D4 Produits/FIFO · D5 UI | 12 % | 0 % | |
 | **C** Production | C1 Transfo · C2 Prod · C3 Avancement · C4 Traçabilité · C5 UI | 13 % | 0 % | Dépend D+E |
@@ -117,8 +117,8 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 
 ### Plans d’implémentation Catalogue
 
-- [x] Plan 1 — Fondations & API Matières
-- [ ] Plan 2 — Recettes (ingrédients, étapes, coût matière, temps)
+- [x] Plan 1 — Fondations & API Matières — **code livré** (CRUD + prix + webhooks + tests)
+- [ ] Plan 2 — Recettes (ingrédients, étapes, coût matière, temps) — *plan d’implémentation à rédiger*
 - [ ] Plan 3 — Conditionnements + Produits finis (revient, marge, recette simple)
 - [ ] Plan 4 — Écrans back-office Catalogue
 - [ ] Plan 5 — Auth multi-utilisateur + doc API/webhooks → **absorbé par G1–G3** ([[G - Plateforme (spec)]])
@@ -358,9 +358,9 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 
 ## Prochaine étape suggérée
 
-1. Démarrer **P1** : scaffold Next.js + **G1** auth (voir aussi Catalogue Plan 1 pour le harnais de test).
-2. Enchaîner **P2** Catalogue API (Plan A1 déjà écrit).
-3. Après chaque plan terminé : mettre à jour les colonnes **Fait** / **Contribution** et l’**avancement global**.
+1. **Décider** : rédiger + exécuter **Plan A2 Recettes**, **ou** compléter **G1** (login/session) avant d’avancer le métier.
+2. Merger / PR de `feat/catalogue-plan-1` quand tu veux.
+3. Après chaque plan : mettre à jour **Fait** / **Contribution** et l’avancement global.
 
 ---
 
@@ -383,3 +383,4 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | 2026-07-23 | Spec `F - Planification (spec).md` ; plans F1–F5 ; UC-F1.5 tranché (CF-8) |
 | 2026-07-23 | Specs `T - Transverses` + `S - Réglages & apparence` ; Q-T4/T6 tranchés |
 | 2026-07-23 | Roadmap d’**implémentation** + % (phases P1–P9, jalons J1–J8, avancement global) |
+| 2026-07-23 | **Plan Catalogue 1 code** : scaffold, Prisma, API Matières, webhooks ; ~8 % impl ; branche `feat/catalogue-plan-1` |
