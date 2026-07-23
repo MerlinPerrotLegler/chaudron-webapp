@@ -7,7 +7,7 @@
 >
 > **Ordre d’implémentation** : socle technique minimal → **A → E → D → C → B → F** ; T/S en continu / en fin ; **login/session (G1) en dernier**. Branche de travail : **`main`** (commits atomiques).
 
-**Dernière mise à jour** : 2026-07-24 (Stock D cœur API livré)
+**Dernière mise à jour** : 2026-07-24 (Production C cœur API livré)
 
 ---
 
@@ -16,8 +16,8 @@
 | Volet | Avancement | Commentaire |
 |-------|------------|-------------|
 | **Spécification** | **~98 %** | Specs A→G + T + S rédigées ; reste polish mineur / questions mineures |
-| **Implémentation code** | **~49 %** | Catalogue + Culture + **Stock** (55 tests) |
-| **Projet V1 (pondéré)** | **~58 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×49 ≈ 58 %` |
+| **Implémentation code** | **~61 %** | Catalogue + Culture + Stock + **Production C** |
+| **Projet V1 (pondéré)** | **~68 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×61 ≈ 68 %` |
 
 > Mettre à jour la ligne **Implémentation** et le **total pondéré** à chaque fin de plan (G1, A1…).
 
@@ -38,12 +38,12 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | **P2** | Catalogue API (**A** plans 1–3) | 12 % | **100 %** | 12 |
 | **P3** | Culture (**E1–E4**) | 16 % | **100 %** | 16 |
 | **P4** | Stock (**D1–D4**) | 11 % | ~80 % | ~9 |
-| **P5** | Production & traçabilité (**C1–C4**) | 12 % | 0 % | 0 |
+| **P5** | Production & traçabilité (**C1–C4**) | 12 % | ~70 % | ~8 |
 | **P6** | Commercial (**B1–B4**) | 13 % | 0 % | 0 |
 | **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | 0 % | 0 |
 | **P8** | Planification (**F1–F5**) | 7 % | 0 % | 0 |
 | **P9** | Transverses (**T1–T5**) + Réglages (**S1–S4**) + uploads/search **G5** | 7 % | 0 % | 0 |
-| | **Total implémentation** | **100 %** | | **~49 %** |
+| | **Total implémentation** | **100 %** | | **~61 %** |
 
 ### Détail par domaine (plans)
 
@@ -53,7 +53,7 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | **A** Catalogue | A1–A3 ✅ · A4 UI | 14 % | ~85 % | API complète ; reste UI A4 |
 | **E** Culture | E1–E4 ✅ · E5 UI | 18 % | ~80 % | API complète ; reste UI |
 | **D** Stock | D1–D4 ✅ (cœur) · D5 UI | 12 % | ~75 % | Achats, FIFO, récolte→stock, alertes |
-| **C** Production | C1 Transfo · C2 Prod · C3 Avancement · C4 Traçabilité · C5 UI | 13 % | 0 % | Dépend D+E |
+| **C** Production | C1–C2 ✅ · C3–C4 partiel · C5 UI | 13 % | ~55 % | Transfo + prod + stock ; traçabilité API plus tard |
 | **B** Commercial | B1 Clients/PdV · B2 Intentions · B3 Commandes · B4 Livrer · B5 Ventes/UI | 14 % | 0 % | |
 | **F** Planification | F1–F5 | 7 % | 0 % | En dernier |
 | **T** Transverses | T1–T5 | 5 % | 0 % | Dashboard tôt possible (T1 partiel) |
@@ -358,8 +358,8 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 
 ## Prochaine étape suggérée
 
-1. **Production C** (séchage / transformation / production).
-2. Puis **Commercial B**.
+1. **Commercial B** (clients, commandes, ventes).
+2. Traçabilité API C4 + ajustements stock restants.
 3. **G1 login** en dernier.
 
 ---
@@ -390,3 +390,4 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | 2026-07-24 | `.env.test` distant OK (`%21`) ; **Culture E1** (parcelles/planches/journals) ; 50 tests ; ~22 % impl |
 | 2026-07-24 | **Culture E2–E4** (espèces, lots/cascade, récoltes) ; 53 tests ; ~38 % impl / ~50 % V1 |
 | 2026-07-24 | **Stock** (emplacements, achats, FIFO, récolte→stock) ; 55 tests ; ~49 % impl / ~58 % V1 |
+| 2026-07-24 | **Production C** (séchage/transfo + productions) ; ~61 % impl / ~68 % V1 |
