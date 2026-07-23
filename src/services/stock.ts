@@ -96,6 +96,57 @@ export async function entrerMatiereDepuisRecolte(input: {
   return lot;
 }
 
+export async function entrerMatiereDepuisTransformation(input: {
+  matiereId: number;
+  quantite: number;
+  date: string;
+  emplacementId?: number;
+  datePeremption?: string;
+  transformationId: number;
+  operateurNom?: string;
+}) {
+  const matiere = await getMatiere(input.matiereId);
+  const lot = await prisma.$transaction(async (tx) => {
+    const l = await tx.lotStockMatiere.create({
+      data: {
+        matiereId: input.matiereId,
+        emplacementId: input.emplacementId,
+        quantiteInitiale: input.quantite,
+        quantiteRestante: input.quantite,
+        unite: matiere.uniteAchat,
+        dateEntree: parseDateOnly(input.date),
+        datePeremption: input.datePeremption
+          ? parseDateOnly(input.datePeremption)
+          : undefined,
+        sourceType: 'transformation',
+        sourceId: input.transformationId,
+      },
+    });
+    await tx.mouvement.create({
+      data: {
+        date: parseDateOnly(input.date),
+        sens: 'entree',
+        cible: 'matiere',
+        lotMatiereId: l.id,
+        quantite: input.quantite,
+        emplacementId: input.emplacementId,
+        operateurNom: input.operateurNom,
+        refType: 'transformation',
+        refId: input.transformationId,
+      },
+    });
+    return l;
+  });
+  await emit('stock.mouvement', {
+    sens: 'entree',
+    cible: 'matiere',
+    lot_id: lot.id,
+    quantite: input.quantite,
+    ref: 'transformation',
+  });
+  return lot;
+}
+
 export async function declareAchat(input: {
   matiereId: number;
   date: string;

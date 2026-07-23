@@ -270,6 +270,9 @@ model Matiere {
   recoltes     Recolte[]
   lotsStock    LotStockMatiere[]
   achats       Achat[]
+  transfoOut   Transformation[]        @relation("TransfoOut")
+  transfoLignes TransformationLigneIn[]
+  prodLignes   ProductionLigneMatiere[]
 }
 
 model MatierePrix {
@@ -311,6 +314,7 @@ model Recette {
   ingredients           RecetteIngredient[]
   etapes                EtapeRecette[]
   produits              ProduitFini[]
+  productions           Production[]
 }
 
 model RecetteIngredient {
@@ -380,6 +384,7 @@ model ProduitFini {
   createdAt         DateTime        @default(now())
   updatedAt         DateTime        @updatedAt
   lotsStock         LotStockProduit[]
+  productionSorties ProductionSortie[]
 }
 
 model Parametres {
@@ -498,6 +503,122 @@ model PlancheJour {
   notes     String   @db.Text
 
   @@id([plancheId, date])
+}
+
+// ——— Domaine C : Production & transformation ———
+
+enum TypeTransformation {
+  sechage
+  distillation
+  mondage
+  congelation
+  torrefaction
+  autre
+}
+
+enum StatutOperation {
+  brouillon
+  en_cours
+  terminee
+  annulee
+}
+
+enum StatutEtapeProd {
+  a_faire
+  en_cours
+  termine
+}
+
+model Transformation {
+  id                  Int                 @id @default(autoincrement())
+  type                TypeTransformation
+  typeLibelle         String?
+  date                DateTime            @db.Date
+  parametres          Json?
+  matiereOutId        Int
+  matiereOut          Matiere              @relation("TransfoOut", fields: [matiereOutId], references: [id])
+  quantiteOut         Float
+  uniteOut            UniteAchat
+  rendement           Float?
+  emplacementOutId    Int?
+  datePeremptionOut   DateTime?           @db.Date
+  lotStockMatiereOutId Int?
+  operateurNom        String?
+  notes               String?             @db.Text
+  statut              StatutOperation     @default(terminee)
+  createdAt           DateTime            @default(now())
+  lignesIn            TransformationLigneIn[]
+}
+
+model TransformationLigneIn {
+  id               Int            @id @default(autoincrement())
+  transformationId Int
+  transformation   Transformation @relation(fields: [transformationId], references: [id])
+  matiereId        Int
+  matiere          Matiere        @relation(fields: [matiereId], references: [id])
+  quantite         Float
+  notes            String?
+}
+
+model Production {
+  id                   Int               @id @default(autoincrement())
+  recetteId            Int
+  recette              Recette           @relation(fields: [recetteId], references: [id])
+  date                 DateTime          @db.Date
+  numeroLot            String            @unique
+  facteurEchelle       Float             @default(1)
+  quantiteSortieVisee  Float?
+  poidsKg              Float?
+  datePeremption       DateTime?         @db.Date
+  operateurNom         String?
+  statut               StatutOperation   @default(brouillon)
+  notes                String?           @db.Text
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  lignesMatiere        ProductionLigneMatiere[]
+  sorties              ProductionSortie[]
+  etapes               ProductionEtape[]
+}
+
+model ProductionLigneMatiere {
+  id              Int        @id @default(autoincrement())
+  productionId    Int
+  production      Production @relation(fields: [productionId], references: [id])
+  matiereId       Int
+  matiere         Matiere    @relation(fields: [matiereId], references: [id])
+  quantiteRequise Float
+  poidsKgConsomme Float?
+  notes           String?
+}
+
+model ProductionSortie {
+  id               Int        @id @default(autoincrement())
+  productionId     Int
+  production       Production @relation(fields: [productionId], references: [id])
+  produitFiniId    Int
+  produitFini      ProduitFini @relation(fields: [produitFiniId], references: [id])
+  quantiteUnites   Float
+  poidsKg          Float?
+  notes            String?
+  datePeremption   DateTime?  @db.Date
+  emplacementId    Int?
+  lotStockProduitId Int?
+}
+
+model ProductionEtape {
+  id                     Int             @id @default(autoincrement())
+  productionId           Int
+  production             Production      @relation(fields: [productionId], references: [id])
+  etapeRecetteId         Int?
+  ordre                  Int             @default(0)
+  description            String          @db.Text
+  tempsMainOeuvrePrevuMin Int            @default(0)
+  tempsAttentePrevuMin   Int             @default(0)
+  statut                 StatutEtapeProd @default(a_faire)
+  poidsKg                Float?
+  notes                  String?         @db.Text
+  startedAt              DateTime?
+  finishedAt             DateTime?
 }
 
 // ——— Domaine D : Stock ———

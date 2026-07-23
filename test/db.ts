@@ -2,6 +2,12 @@ import { prisma } from '@/lib/prisma';
 
 /** Ordre de suppression respectant les FK. */
 export async function resetDb() {
+  await prisma.productionEtape.deleteMany();
+  await prisma.productionSortie.deleteMany();
+  await prisma.productionLigneMatiere.deleteMany();
+  await prisma.production.deleteMany();
+  await prisma.transformationLigneIn.deleteMany();
+  await prisma.transformation.deleteMany();
   await prisma.mouvement.deleteMany();
   await prisma.lotStockProduit.deleteMany();
   await prisma.lotStockMatiere.deleteMany();

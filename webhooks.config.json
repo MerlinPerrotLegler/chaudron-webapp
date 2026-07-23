@@ -19,5 +19,7 @@
   "lot.planning_maj": [],
   "recolte.declaree": [],
   "stock.mouvement": [],
-  "achat.declare": []
+  "achat.declare": [],
+  "transformation.declaree": [],
+  "production.declaree": []
 }
