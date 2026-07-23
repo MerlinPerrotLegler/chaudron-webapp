@@ -3,5 +3,9 @@
   "matiere.maj": [],
   "matiere.prix_ajoute": [],
   "recette.creee": [],
-  "recette.maj": []
+  "recette.maj": [],
+  "conditionnement.maj": [],
+  "produit.cree": [],
+  "produit.maj": [],
+  "produit.desactive": []
 }

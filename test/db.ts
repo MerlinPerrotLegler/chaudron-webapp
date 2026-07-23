@@ -13,4 +13,5 @@ export async function resetDb() {
   await prisma.conditionnement.deleteMany();
   await prisma.categorieReglementaire.deleteMany();
   await prisma.equipement.deleteMany();
+  await prisma.parametres.deleteMany();
 }
