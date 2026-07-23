@@ -5,9 +5,9 @@
 >
 > **Convention** : pas de PR obligatoires pour le doc. Commits atomiques en français dès le code.
 >
-> **Ordre d’implémentation** : G (socle) dès le début → A → E → D → C → B → F ; T/S en continu / en fin.
+> **Ordre d’implémentation** : socle technique minimal → **A → E → D → C → B → F** ; T/S en continu / en fin ; **login/session (G1) en dernier**. Branche de travail : **`main`** (commits atomiques).
 
-**Dernière mise à jour** : 2026-07-23 (Plan Catalogue 1 code livré)
+**Dernière mise à jour** : 2026-07-23 (merge main ; Plan A2 rédigé ; login en dernier)
 
 ---
 
@@ -118,7 +118,7 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 ### Plans d’implémentation Catalogue
 
 - [x] Plan 1 — Fondations & API Matières — **code livré** (CRUD + prix + webhooks + tests)
-- [ ] Plan 2 — Recettes (ingrédients, étapes, coût matière, temps) — *plan d’implémentation à rédiger*
+- [x] Plan 2 — Recettes — *plan rédigé* (`A - Catalogue — Plan 2 (Recettes).md`) — code à faire
 - [ ] Plan 3 — Conditionnements + Produits finis (revient, marge, recette simple)
 - [ ] Plan 4 — Écrans back-office Catalogue
 - [ ] Plan 5 — Auth multi-utilisateur + doc API/webhooks → **absorbé par G1–G3** ([[G - Plateforme (spec)]])
@@ -358,9 +358,9 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 
 ## Prochaine étape suggérée
 
-1. **Décider** : rédiger + exécuter **Plan A2 Recettes**, **ou** compléter **G1** (login/session) avant d’avancer le métier.
-2. Merger / PR de `feat/catalogue-plan-1` quand tu veux.
-3. Après chaque plan : mettre à jour **Fait** / **Contribution** et l’avancement global.
+1. Renseigner **`.env`** / **`.env.test`** avec le MySQL **distant** (hPanel) — 2 bases : `chaudron` + `chaudron_test`.
+2. Exécuter **Plan A2 Recettes** sur `main` (commits atomiques).
+3. **G1 login** seulement en fin de parcours métier.
 
 ---
 
@@ -384,3 +384,4 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | 2026-07-23 | Specs `T - Transverses` + `S - Réglages & apparence` ; Q-T4/T6 tranchés |
 | 2026-07-23 | Roadmap d’**implémentation** + % (phases P1–P9, jalons J1–J8, avancement global) |
 | 2026-07-23 | **Plan Catalogue 1 code** : scaffold, Prisma, API Matières, webhooks ; ~8 % impl ; branche `feat/catalogue-plan-1` |
+| 2026-07-23 | Merge Plan 1 → **`main`** ; login reporté en dernier ; Plan A2 rédigé ; `.env` distant à renseigner |
