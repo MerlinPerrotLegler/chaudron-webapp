@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Provenance {
+  fermiere
+  importation
+  base
+}
+
+enum UniteAchat {
+  kg
+  L
+  piece
+}
+
+enum BesoinEau {
+  faible
+  modere
+  eleve
+}
+
+enum FamilleRecette {
+  sec
+  sirop
+  sel
+  sucre
+  vinaigre
+  lacto
+  moutarde
+  tabasco
+  tisane
+  cosmetique
+  autre
+}
+
+enum TypeRecette {
+  transformation
+  simple
+}
+
+enum ModeQuantite {
+  proportions
+  absolu
+}
+
+model Espece {
+  id        Int       @id @default(autoincrement())
+  nom       String    @unique
+  createdAt DateTime  @default(now())
+  matieres  Matiere[]
+}
+
+model Matiere {
+  id           Int                 @id @default(autoincrement())
+  nom          String              @unique
+  nomLatin     String?
+  provenance   Provenance
+  uniteAchat   UniteAchat          @default(kg)
+  ratioSechage Float?
+  pctEau       Float?
+  besoinEau    BesoinEau?
+  source       String?
+  fournisseur  String?
+  lien         String?
+  prixVenteKg  Float?
+  especeId     Int?
+  espece       Espece?             @relation(fields: [especeId], references: [id])
+  archivee     Boolean             @default(false)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  prix         MatierePrix[]
+  ingredients  RecetteIngredient[]
+}
+
+model MatierePrix {
+  id        Int      @id @default(autoincrement())
+  matiereId Int
+  matiere   Matiere  @relation(fields: [matiereId], references: [id])
+  date      DateTime @db.Date
+  prix      Float
+  createdAt DateTime @default(now())
+
+  @@index([matiereId, date])
+}
+
+model CategorieReglementaire {
+  id        Int       @id @default(autoincrement())
+  nom       String    @unique
+  lienFiche String?
+  recettes  Recette[]
+}
+
+model Recette {
+  id                    Int                 @id @default(autoincrement())
+  nom                   String              @unique
+  description           String?             @db.Text
+  tags                  Json?
+  famille               FamilleRecette
+  type                  TypeRecette         @default(transformation)
+  categorieId           Int?
+  categorie             CategorieReglementaire? @relation(fields: [categorieId], references: [id])
+  modeQuantite          ModeQuantite        @default(proportions)
+  quantiteSortie        Float?
+  uniteSortie           String?
+  lotRefLibelle         String?
+  rendementRatioTravail Float               @default(1)
+  notesVariante         String?             @db.Text
+  archivee              Boolean             @default(false)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  ingredients           RecetteIngredient[]
+  etapes                EtapeRecette[]
+  produits              ProduitFini[]
+}
+
+model RecetteIngredient {
+  id          Int     @id @default(autoincrement())
+  recetteId   Int
+  recette     Recette @relation(fields: [recetteId], references: [id])
+  matiereId   Int
+  matiere     Matiere @relation(fields: [matiereId], references: [id])
+  ordre       Int     @default(0)
+  quantite    Float
+  unite       String
+  poidsEquivG Float?
+}
+
+model EtapeRecette {
+  id              Int               @id @default(autoincrement())
+  recetteId       Int
+  recette         Recette           @relation(fields: [recetteId], references: [id])
+  ordre           Int               @default(0)
+  description     String            @db.Text
+  tempsMainOeuvre Int               @default(0)
+  tempsAttente    Int               @default(0)
+  parametres      Json?
+  equipements     EtapeEquipement[]
+}
+
+model Equipement {
+  id     Int               @id @default(autoincrement())
+  nom    String            @unique
+  etapes EtapeEquipement[]
+}
+
+model EtapeEquipement {
+  etapeId      Int
+  equipementId Int
+  etape        EtapeRecette @relation(fields: [etapeId], references: [id])
+  equipement   Equipement   @relation(fields: [equipementId], references: [id])
+
+  @@id([etapeId, equipementId])
+}
+
+model Conditionnement {
+  id            Int           @id @default(autoincrement())
+  nom           String        @unique
+  contenance    Float?
+  poidsNet      Float?
+  coutContenant Float         @default(0)
+  coutBouchon   Float         @default(0)
+  coutEtiquette Float         @default(0)
+  coutTotal     Float         @default(0)
+  lienContenant String?
+  lienBouchon   String?
+  archive       Boolean       @default(false)
+  produits      ProduitFini[]
+}
+
+model ProduitFini {
+  id                Int             @id @default(autoincrement())
+  recetteId         Int
+  recette           Recette         @relation(fields: [recetteId], references: [id])
+  conditionnementId Int
+  conditionnement   Conditionnement @relation(fields: [conditionnementId], references: [id])
+  poidsUnite        Float
+  prixVenteUnite    Float?
+  actif             Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model Parametres {
+  id                    Int     @id @default(1)
+  tauxHoraireMainOeuvre Float   @default(0)
+  inclureMo             Boolean @default(true)
+}
