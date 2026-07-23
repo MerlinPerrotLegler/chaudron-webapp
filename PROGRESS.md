@@ -6,7 +6,7 @@
 >
 > **Ordre de construction** (cf. `obsidian/00 - Cas d'utilisation.md` §4) : A → E → D → C → B → F ; G transverse dès A.
 
-**Dernière mise à jour** : 2026-07-23 (spec E Culture)
+**Dernière mise à jour** : 2026-07-23 (spec D Stock)
 
 ---
 
@@ -67,47 +67,54 @@
 
 ### Spec métier
 
+### Spec métier
+
 - [x] Spec `E - Culture (spec).md`
-- [x] Parcelles (code D6, vocation, sol, journals travail du sol / entrants, images annotées, historique journalier)
+- [x] **Parcelle** (lettres) + **Planche** (numéros → code `SA-01`) ; vocation sur parcelle ; journals/images sur planche
 - [x] Espèces & données culturales (lien matière fermière)
 - [x] Itinéraires techniques (étapes personnalisables, durées en **jours**, fenêtres `MM-DD`)
 - [x] Associations & risques (données V1 ; alertes auto plus tard — Q-E8)
-- [x] Lots de culture & planning **au jour près**
+- [x] Lots de culture (sur **planche**) & planning **au jour près**
 - [x] Cascade avant / arrière + verrouillage / découplage (UC-E3.3–E3.5)
-- [x] Détection de conflits (parcelle, surface, saison)
-- [x] Récoltes multi par lot (entrée stock matière, webhook, traçabilité)
+- [x] Détection de conflits (planche, surface, saison)
+- [x] Récoltes multi-sessions / campagnes (pluie, reprise) + webhook
 - [x] API Culture + webhooks (`recolte.declaree`, …)
-- [x] Écrans (fiche parcelle, calendrier jour, lots)
+- [x] Écrans (parcelles, planches, calendrier jour, lots)
 
 ### Plans
 
-- [ ] Plan E1 — Parcelles + journals + images + historique journalier
+- [ ] Plan E1 — Parcelles + Planches + journals + images + historique journalier
 - [ ] Plan E2 — Espèces + itinéraires (jours) + associations/risques/faisabilité
-- [ ] Plan E3 — Lots + cascade (jours) + conflits + API planning
-- [ ] Plan E4 — Récoltes (multi) + webhook (+ branchement stock D)
+- [ ] Plan E3 — Lots (planche) + cascade (jours) + conflits + API planning
+- [ ] Plan E4 — Récoltes multi-sessions / campagnes + webhook (+ branchement stock D)
 - [ ] Plan E5 — Écrans back-office Culture
 
 ---
 
 ## D. Stock
 
-> Dépend de A ; branché ensuite par C (prod/transf.), E (récoltes), B (ventes).
+> Dépend de A ; branché par C (prod/transf.), E (récoltes), B (ventes).
+> Spec métier : `obsidian/D - Stock (spec).md`
 
 ### Spec métier
 
-- [ ] Spec `D - Stock (spec).md`
-- [ ] Stock produits finis (niveaux, alertes vs intentions, ajustements inventaire)
-- [ ] Stock matière (frais/sec, toutes provenances)
-- [ ] Entrées : récoltes + achats (import/base) + webhook achat
-- [ ] Sorties : productions / transformations
-- [ ] DLUO / péremption par lot (Q-D1)
-- [ ] Emplacements de stockage select+créer (Q-D2), lien n° de sacs
-- [ ] API Stock + webhooks mouvements
-- [ ] Écrans stock & alertes
+- [x] Spec `D - Stock (spec).md`
+- [x] Stock produits finis (lots, alertes mini / vs intentions si B)
+- [x] Stock matière (lots, toutes provenances ; frais/sec = matières distinctes)
+- [x] Entrées : récoltes (service E) + achats + webhook
+- [x] Sorties : services production / transformation / vente (FIFO DLUO)
+- [x] DLUO / péremption par lot (Q-D1)
+- [x] Emplacements select+créer (Q-D2), lien n° de sacs
+- [x] API Stock + webhooks mouvements / achat
+- [x] Écrans stock & alertes
 
 ### Plans
 
-- [ ] Plan(s) d’implémentation Stock
+- [ ] Plan D1 — Emplacements + lots/mouvements + soldes lecture
+- [ ] Plan D2 — Achats + entrée matière + webhook
+- [ ] Plan D3 — Service récolte (E) + ajustements + transferts
+- [ ] Plan D4 — Lots produit + services C/B + FIFO DLUO
+- [ ] Plan D5 — Alertes + écrans back-office
 
 ---
 
@@ -215,15 +222,14 @@
 
 ### Encore floues / à confirmer
 
-- [ ] Q-A — Seuil **stock mini d’alerte** par matière (lien D)
-- [ ] Q-A — Référentiel **fournisseurs** dédié vs champ texte V1
+- [ ] Q-A — Référentiel **fournisseurs** dédié vs champ texte V1 *(texte acté V1 dans D)*
 - [ ] Q-C — Paramètres optionnels des transformations (température, durée…) — quels champs V1
 - [ ] Q-F — Rotations / pérennité dans la proposition (UC-F1.5)
 - [ ] Q-G3 — **Retry / rejeu** webhooks en cas d’échec au V1
 - [ ] Q-T4 — Historique / journal des modifications
 - [ ] Q-T6 — Sauvegarde / restauration
 - [ ] Q-U — Rôles / permissions différenciés (reporté « plus tard » — confirmer hors V1)
-- [ ] Stock mini alerte matières achetées (UC-A1.5 `❓`)
+- [x] Stock mini alerte matières / produits → CD-5 [[D - Stock (spec)]]
 - [ ] Contact sur points de vente (UC-B3.1 `❓`)
 - [ ] Import en masse des ventes (UC-B2.4 `❓`)
 
@@ -241,9 +247,9 @@
 
 ## Prochaine étape suggérée
 
-1. **Rédiger la spec D — Stock** (branche les récoltes E + prépare C/B), **ou**
-2. **Rédiger la spec G — Plateforme** (conventions API/auth/webhooks communes), **ou**
-3. **Rédiger les plans d’implémentation E1…E5** (si on fige Culture avant de spécifier D).
+1. **Rédiger la spec C — Production & transformation** (consomme D + E), **ou**
+2. **Rédiger la spec G — Plateforme** (conventions API/auth/webhooks), **ou**
+3. **Rédiger la spec B — Commercial** (ventes / intentions, déstockage produit).
 
 ---
 
@@ -254,3 +260,5 @@
 | 2026-07-23 | Création de `PROGRESS.md` — inventaire initial de la spécification |
 | 2026-07-23 | Spec `E - Culture (spec).md` rédigée ; checklist E coché ; plans E1–E5 listés |
 | 2026-07-23 | Spec E ajustée : Parcelle seule entité ; **tout en jours** ; multi-récoltes actées ; D2 précisé |
+| 2026-07-23 | Spec E / D6–D16 : **Parcelle (lettres) + Planche (numéros)** ; récoltes multi-sessions / `campagne_id` (pluie) |
+| 2026-07-23 | Spec `D - Stock (spec).md` ; Q-D1/Q-D2 et `stock_mini` actés ; plans D1–D5 listés |

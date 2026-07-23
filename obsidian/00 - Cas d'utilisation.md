@@ -191,18 +191,13 @@ Le socle de données. Reprend la logique des onglets `Ingredients`, `Recette Epi
 
 ## E. Culture
 
-### E1. Parcelles
-> **Pas d'entité « espace »** (Q-E4) : la **parcelle** est l'unité de base, identifiée par son **numéro**. La vocation (serre, tunnel, plein champ, maraîchage…) est un simple **attribut** de la parcelle.
-- **UC-E1.1** — **Déclarer une parcelle** (unité physique de terrain) avec :
-  - **Nom/code** au format **`[A-Z]+-[0-9]{2,3}`** (ex. `A-01`, `ZC-123`) — validé à la saisie, unique.
-  - **Surface**, **vocation** (attribut : serre semis / tunnel / frais / maraîchage / drainé ensoleillé / grande culture…).
-  - **Particularités du sol** : type de sol, pH, drainage, pierrosité, exposition, pente…
-  - **Particularités de culture** : ce qui pousse bien/mal, contraintes (ombre, vent, gel).
-  - **Travail du sol** : journal des interventions (labour, faux-semis, paillage, couvert…) avec date.
-  - **Entrants** : journal des apports (compost, amendements, fertilisation, **réf. de gaine d'irrigation**, phytos, **réf. graine/plant**…) avec date, produit, quantité — brique de la **traçabilité obligatoire** (UC-C1.3).
-  - **Images annotées** : galerie/**carrousel** de plans et photos de la parcelle. Les images sont **annotées avant upload** (Q-E5) ; pas de géométrie/coordonnées SIG au V1. Stockage : voir [[Guide technique pour développeurs]].
-- **UC-E1.2** — **Historique par semaine / rotation** (Q-E2) : suivre, semaine par semaine, ce qui occupe la parcelle (culture en place, travail du sol, amendements, phytos, réf. graine…). Permet de visualiser la **rotation** dans le temps.
-- **UC-E1.3** — Voir la **fiche parcelle** consolidée : caractéristiques + historique hebdo (rotation) + travail du sol + entrants + lots de culture implantés + images.
+### E1. Parcelles & planches
+> **Pas d'entité « espace »** (Q-E4). Terrain en **deux niveaux** (D6/D16) :
+> - **Parcelle** = zone identifiée par des **lettres** (`SA`, `GA`…) ; la vocation (serre, tunnel, plein champ…) est un **attribut**.
+> - **Planche** = unité cultivée identifiée par des **numéros** dans la parcelle ; code complet `{lettres}-{numeros}` (ex. `SA-01` = 1ʳᵉ planche du tunnel `SA` ; `GA-01` = planche de champ).
+- **UC-E1.1** — **Déclarer une parcelle** (lettres, vocation, sol / particularités de zone) et ses **planches** (numéro, surface, particularités). Journals **travail du sol** / **entrants** (réf. gaine, phytos, réf. graine/plant…) et **images annotées** au niveau **planche** (traçabilité UC-C1.3). Pas de SIG au V1 (Q-E5).
+- **UC-E1.2** — **Historique journalier / rotation** (Q-E2) par **planche** : occupation, travail du sol, amendements… au **jour** près.
+- **UC-E1.3** — Fiches consolidées parcelle (liste des planches) et planche (caractéristiques + historique + lots + images).
 
 ### E2. Espèces & itinéraires techniques
 - **UC-E2.1** — Gérer les **espèces cultivées** (reliées aux matières A1) avec leurs **données culturales** (cf. fiches type [[Thym]]) :
@@ -215,17 +210,17 @@ Le socle de données. Reprend la logique des onglets `Ingredients`, `Recette Epi
 - **UC-E2.4** — **Risques de culture** par espèce (ravageurs, maladies, aléas) avec prévention — champ de connaissance rattaché à l'espèce.
 
 ### E3. Lots de culture & planning par semaines
-- **UC-E3.1** — Créer un **lot de culture** (espèce × **parcelle** × année) avec un **volume/surface** cible et une **importance/priorité**. Le lot **hérite** de l'itinéraire de l'espèce (D4) et peut ajuster ses durées **et ses données propres, qui varient d'une année à l'autre** (rendement réel, dates… — Q-E7).
-- **UC-E3.2** — Afficher le **planning de culture par semaines** (calendrier hebdomadaire, une ligne par lot, étapes positionnées sur les semaines).
-- **UC-E3.3** — **Décalage automatique en cascade** : si je change la **date de semis**, la plantation et les étapes suivantes se décalent d'autant (selon les durées de l'itinéraire). ⭐ Fonction clé.
-- **UC-E3.4** — **Décalage inverse** : si je change une étape aval (ex. je veux récolter à telle semaine), les étapes amont (plantation, semis) se recalculent en remontant. ⭐ Fonction clé.
+- **UC-E3.1** — Créer un **lot de culture** (espèce × **planche** × année) avec un **volume/surface** cible et une **importance/priorité**. Le lot **hérite** de l'itinéraire de l'espèce (D4) et peut ajuster ses durées **et ses données propres, qui varient d'une année à l'autre** (rendement réel, dates… — Q-E7).
+- **UC-E3.2** — Afficher le **planning de culture au jour près** (calendrier / timeline, une ligne par lot, étapes positionnées sur des **dates**).
+- **UC-E3.3** — **Décalage automatique en cascade** : si je change la **date de semis**, la plantation et les étapes suivantes se décalent d'autant (selon les durées en **jours** de l'itinéraire). ⭐ Fonction clé.
+- **UC-E3.4** — **Décalage inverse** : si je change une étape aval (ex. je veux récolter à telle date), les étapes amont (plantation, semis) se recalculent en remontant. ⭐ Fonction clé.
 - **UC-E3.5** — **Modifier manuellement** le planning proposé (déplacer une étape, verrouiller une date pour qu'elle ne bouge plus, découpler une étape de la cascade).
-- **UC-E3.6** — Détecter les **conflits** : deux lots sur la même **parcelle** en même temps, dépassement de surface, fenêtre calendaire hors saison.
+- **UC-E3.6** — Détecter les **conflits** : deux lots sur la même **planche** en même temps, dépassement de surface, fenêtre calendaire hors saison.
 
 ### E4. Récoltes
-- **UC-E4.1** — **Déclarer une récolte** (lot de culture, date, quantité récoltée en frais, **qualité**, **n° des sacs de stock**, **emplacement**, **date de péremption** — cf. traçabilité UC-C1.3).
-- **UC-E4.2** — La récolte **entre en stock matière** (frais, matière fermière) et **émet le webhook** `récolte déclarée`. Le passage **frais → sec** se fait ensuite via une **transformation** tracée (UC-C0), pas une conversion automatique.
-- **UC-E4.3** — **Suivi lot/parcelle** : de la récolte on remonte au lot de culture et à la **parcelle** (traçabilité obligatoire), et en aval on relie aux productions qui l'ont consommée.
+- **UC-E4.1** — **Déclarer une récolte** (session) : lot de culture, **date**, quantité récoltée en frais, **qualité**, **n° des sacs de stock**, **emplacement**, **date de péremption**. Plusieurs sessions possibles sur un même lot : coupes successives **ou** vague étalée / **interrompue** (pluie, reprise quand plantes sèches) — sessions regroupables par `campagne_id`.
+- **UC-E4.2** — Chaque session **entre en stock matière** (frais, matière fermière) et **émet le webhook** `récolte déclarée`. Le passage **frais → sec** se fait ensuite via une **transformation** tracée (UC-C0), pas une conversion automatique.
+- **UC-E4.3** — **Suivi lot/planche/parcelle** : de la récolte on remonte au lot → **planche** → **parcelle** (traçabilité obligatoire), et en aval on relie aux productions qui l'ont consommée.
 - **UC-E4.4** — Suivre l'**état d'avancement des cultures** (semé / planté / en croissance / en récolte / terminé) par lot.
 
 ---

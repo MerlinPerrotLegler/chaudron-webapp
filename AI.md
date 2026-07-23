@@ -52,14 +52,14 @@
 | **Matière**                  | Générique des trois ci-dessus, avec un champ `provenance` (`fermiere`/`importation`/`base`) |
 
 
-Chaîne de traçabilité **obligatoire** : **Parcelle → Récolte → Transformation → Produit** (remontable de bout en bout).
+Chaîne de traçabilité **obligatoire** : **Parcelle → Planche → Récolte → Transformation → Produit** (remontable de bout en bout).
 
 ## 6. Décisions structurantes (résumé — détail dans le doc Décisions)
 
 - **Modèle temporel** : **année civile** ; dans **Culture**, maille opérationnelle = **jour** (dates + durées en jours) — voir D2 précisé / CE-2.
 - **Transformation primaire** (séchage, distillation…) = opération tracée distincte de la production par recette.
 - **Multi-utilisateur** ; opérateur tracé sur les actions.
-- **Parcelle** = unité de base (pas d'entité « espace »), code `[A-Z]+-[0-9]{2,3}`.
+- **Terrain** : **Parcelle** = lettres (`SA`) + vocation ; **Planche** = numéros (`01`) → code `SA-01` (D6). Pas d’entité « espace ».
 - Storefront V1 = **front de vente interne** (pas de boutique publique).
 
 

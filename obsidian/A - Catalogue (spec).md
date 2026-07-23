@@ -206,8 +206,8 @@ Payloads **versionnés** (`version` + `type` + `data`) et **documentés** (décl
 - Benchmarks concurrence (Q-A2) — hors V1.
 - Import initial depuis `Recettes et production - v19.xlsx` (UC-T3) — **souhaitable**, à cadrer dans une spec d'import dédiée.
 - Familles **cosmétiques** : modèle générique prêt, données V1 = alimentaire (Q-A6).
-- `❓` Seuil de **stock mini d'alerte** par matière (lien domaine D).
-- `❓` Référentiel **fournisseurs** dédié (V1 = champ texte).
+- **`stock_mini`** par matière / produit : acté dans [[D - Stock (spec)]] (CD-5).
+- Référentiel **fournisseurs** dédié : V1 = champ texte (achat) — inchangé.
 
 ---
 
