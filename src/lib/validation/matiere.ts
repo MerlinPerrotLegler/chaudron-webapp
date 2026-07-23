@@ -16,3 +16,6 @@ export const matiereCreateSchema = z.object({
 });
 
 export type MatiereCreateInput = z.infer<typeof matiereCreateSchema>;
+
+export const matiereUpdateSchema = matiereCreateSchema.partial();
+export type MatiereUpdateInput = z.infer<typeof matiereUpdateSchema>;
