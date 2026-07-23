@@ -12,5 +12,10 @@
   "parcelle.maj": [],
   "planche.creee": [],
   "planche.maj": [],
-  "planche.entrant_ajoute": []
+  "planche.entrant_ajoute": [],
+  "lot.cree": [],
+  "lot.maj": [],
+  "lot.etat_change": [],
+  "lot.planning_maj": [],
+  "recolte.declaree": []
 }

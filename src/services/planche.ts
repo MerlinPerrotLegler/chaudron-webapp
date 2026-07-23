@@ -100,6 +100,15 @@ export async function updatePlanche(id: number, input: PlancheUpdateInput) {
 
 export async function archivePlanche(id: number) {
   await getPlanche(id);
-  // Lots (E3) pas encore en schéma — pas de check lots pour l'instant
+  const lots = await prisma.lotCulture.count({
+    where: {
+      plancheId: id,
+      archive: false,
+      etat: { notIn: ['termine', 'abandonne'] },
+    },
+  });
+  if (lots > 0) {
+    throw new AppError('conflict', 'Planche avec lots actifs', 409, { lots });
+  }
   return prisma.planche.update({ where: { id }, data: { archivee: true } });
 }

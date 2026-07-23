@@ -50,10 +50,200 @@ enum ModeQuantite {
 }
 
 model Espece {
-  id        Int       @id @default(autoincrement())
-  nom       String    @unique
-  createdAt DateTime  @default(now())
-  matieres  Matiere[]
+  id                   Int               @id @default(autoincrement())
+  nom                  String            @unique
+  nomLatin             String?
+  famille              String?
+  cycle                CycleEspece?
+  renouvellementAns    Int?
+  phMin                Float?
+  phMax                Float?
+  typeSol              String?
+  exposition           String?
+  tempsLeveeMin        Int?
+  tempsLeveeMax        Int?
+  tempsAvantRepiquage  Int?
+  besoinEau            BesoinEau?
+  besoinEauLJour       Float?
+  besoinEauLMois       Float?
+  espacementCm         Float?
+  densitePlantsHa      Float?
+  rendementTHaFrais    Float?
+  rendementKgHaSec     Float?
+  amendementNotes      String?           @db.Text
+  archivee             Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  matieres             Matiere[]
+  itineraires          ItineraireEtape[]
+  associations         Association[]     @relation("EspeceSource")
+  associationsCibles   Association[]     @relation("EspeceCible")
+  risques              RisqueCulture[]
+  faisabilites         Faisabilite[]
+  lots                 LotCulture[]
+}
+
+enum CycleEspece {
+  annuelle
+  bisannuelle
+  vivace
+}
+
+enum CodeItineraire {
+  semis
+  plantation
+  recolte
+  taille
+  division
+  autre
+}
+
+enum TypeAssociation {
+  favorable
+  deconseillee
+}
+
+enum NiveauFaisabilite {
+  vert
+  jaune
+  rouge
+}
+
+enum PrioriteLot {
+  P1
+  P2
+  P3
+}
+
+enum EtatLot {
+  prevu
+  seme
+  plante
+  en_croissance
+  en_recolte
+  termine
+  abandonne
+}
+
+enum QualiteRecolte {
+  A
+  B
+  C
+  autre
+}
+
+model ItineraireEtape {
+  id                         Int            @id @default(autoincrement())
+  especeId                   Int
+  espece                     Espece         @relation(fields: [especeId], references: [id])
+  ordre                      Int            @default(0)
+  code                       CodeItineraire
+  libelle                    String?
+  dureeDepuisPrecedenteJours Int            @default(0)
+  fenetreDebutMmdd           String?
+  fenetreFinMmdd             String?
+  description                String?        @db.Text
+
+  @@index([especeId, ordre])
+}
+
+model Association {
+  id            Int             @id @default(autoincrement())
+  especeId      Int
+  espece        Espece          @relation("EspeceSource", fields: [especeId], references: [id])
+  especeCibleId Int
+  especeCible   Espece          @relation("EspeceCible", fields: [especeCibleId], references: [id])
+  type          TypeAssociation
+  notes         String?         @db.Text
+
+  @@unique([especeId, especeCibleId, type])
+}
+
+model RisqueCulture {
+  id          Int     @id @default(autoincrement())
+  especeId    Int
+  espece      Espece  @relation(fields: [especeId], references: [id])
+  nom         String
+  description String? @db.Text
+  prevention  String? @db.Text
+
+  @@index([especeId])
+}
+
+model Faisabilite {
+  especeId  Int
+  espece    Espece            @relation(fields: [especeId], references: [id])
+  vocation  VocationParcelle
+  niveau    NiveauFaisabilite
+  notes     String?           @db.Text
+
+  @@id([especeId, vocation])
+}
+
+model LotCulture {
+  id                     Int         @id @default(autoincrement())
+  especeId               Int
+  espece                 Espece      @relation(fields: [especeId], references: [id])
+  plancheId              Int
+  planche                Planche     @relation(fields: [plancheId], references: [id])
+  annee                  Int
+  surfaceM2              Float
+  priorite               PrioriteLot @default(P2)
+  rendementTHaFraisReel  Float?
+  rendementKgHaSecReel   Float?
+  notes                  String?     @db.Text
+  etat                   EtatLot     @default(prevu)
+  archive                Boolean     @default(false)
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  etapes                 LotEtape[]
+  recoltes               Recolte[]
+
+  @@index([plancheId, annee])
+  @@index([especeId, annee])
+}
+
+model LotEtape {
+  id                         Int       @id @default(autoincrement())
+  lotId                      Int
+  lot                        LotCulture @relation(fields: [lotId], references: [id])
+  ordre                      Int       @default(0)
+  code                       CodeItineraire
+  libelle                    String?
+  dureeDepuisPrecedenteJours Int       @default(0)
+  fenetreDebutMmdd           String?
+  fenetreFinMmdd             String?
+  description                String?   @db.Text
+  datePrevue                 DateTime? @db.Date
+  verrouillee                Boolean   @default(false)
+  decouplee                  Boolean   @default(false)
+  dateReelle                 DateTime? @db.Date
+  fait                       Boolean   @default(false)
+
+  @@index([lotId, ordre])
+}
+
+model Recolte {
+  id              Int             @id @default(autoincrement())
+  lotId           Int
+  lot             LotCulture      @relation(fields: [lotId], references: [id])
+  date            DateTime        @db.Date
+  poidsKg         Float
+  qualite         QualiteRecolte  @default(A)
+  qualiteNotes    String?
+  numerosSacs     Json?
+  emplacement     String?
+  datePeremption  DateTime?       @db.Date
+  campagneId      String?
+  notes           String?         @db.Text
+  operateurNom    String?
+  matiereId       Int
+  matiere         Matiere         @relation(fields: [matiereId], references: [id])
+  stockMouvementId Int?
+  createdAt       DateTime        @default(now())
+
+  @@index([lotId, date])
+  @@index([campagneId])
 }
 
 model Matiere {
@@ -76,6 +266,7 @@ model Matiere {
   updatedAt    DateTime            @updatedAt
   prix         MatierePrix[]
   ingredients  RecetteIngredient[]
+  recoltes     Recolte[]
 }
 
 model MatierePrix {
@@ -247,6 +438,7 @@ model Planche {
   entrants       Entrant[]
   images         PlancheImage[]
   jours          PlancheJour[]
+  lots           LotCulture[]
 
   @@unique([parcelleId, numero])
 }
