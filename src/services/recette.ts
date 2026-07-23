@@ -1,4 +1,4 @@
-import type { FamilleRecette, Prisma } from '@prisma/client';
+import { Prisma, type FamilleRecette } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { AppError } from '@/lib/errors';
 import { emit } from '@/lib/webhooks';
