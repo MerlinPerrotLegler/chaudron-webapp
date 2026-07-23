@@ -52,7 +52,7 @@
 | **Matière**                  | Générique des trois ci-dessus, avec un champ `provenance` (`fermiere`/`importation`/`base`) |
 
 
-Chaîne de traçabilité **obligatoire** : **Parcelle → Planche → Récolte → Transformation → Produit** (remontable de bout en bout).
+Chaîne de traçabilité **obligatoire** : **Parcelle → Planche → Récolte → Séchage → Transformation → Produit** (remontable de bout en bout). **À chaque étape** : **poids** + **notes**.
 
 ## 6. Décisions structurantes (résumé — détail dans le doc Décisions)
 

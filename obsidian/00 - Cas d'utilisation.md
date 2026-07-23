@@ -137,9 +137,12 @@ Le socle de données. Reprend la logique des onglets `Ingredients`, `Recette Epi
 - **UC-B2.4** — Saisie **agrégée par jour de vente / par produit** (marché) ; `❓` import en masse plus tard.
 - **UC-B2.5** — **Historique des ventes** : consulter/filtrer toutes les ventes (par période, produit, point de vente), avec totaux (CA, quantités). Base des statistiques (UC-T8).
 
-### B3. Points de vente & canaux
-- **UC-B3.1** — Gérer les **points de vente / canaux** : vente à la ferme, marché, boutique de producteur, et **demi-gros** (parapharmacies, SPA, masseurs, herboristes, kinés — cf. [[Labo PPAM]] et [[Points de Vente]]). Champs : nom, type/canal, `❓` contact, notes.
-- **UC-B3.2** — Rattacher chaque **vente** à un point de vente pour analyser les ventes **par canal**. Les **intentions** ne sont pas rattachées à un point de vente (Q-B4 = non).
+### B3. Clients, points de vente, commandes & livraisons
+- **UC-B3.1** — Gérer les **fiches clients** (nom, contacts, adresse, notes) et consulter leur **historique** (commandes, ventes, notes manuelles).
+- **UC-B3.2** — Gérer les **points de vente / canaux** (ferme, marché, boutique, demi-gros, tournée…) : jours / dates de livraison, notes. Le PdV est le **canal**, pas le client.
+- **UC-B3.3** — **Commandes** : client + canal PdV, lignes produit, **date de livraison**, notes, statuts (brouillon → … → livrée).
+- **UC-B3.4** — À la **livraison** : déstockage + ventes liées au client ; calendrier des livraisons.
+- **UC-B3.5** — Les **intentions** restent globales (pas de client / PdV — Q-B4).
 
 ---
 
@@ -158,11 +161,13 @@ Le socle de données. Reprend la logique des onglets `Ingredients`, `Recette Epi
 - **UC-C1.1** — Déclarer une **production** = recette + quantité produite + conditionnement(s) obtenus + **date** + **n° de lot de production** + **nom de l'opérateur** + **date de péremption / DLUO**.
 - **UC-C1.2** — La production **consomme la matière** en stock (déstockage) et **restocke le produit fini** (domaine Stock), et **émet le webhook** `production déclarée`.
 - **UC-C1.3** — **Traçabilité complète — OBLIGATOIRE** (Q-C1). Chaîne remontable de bout en bout :
-  - **Parcelle** : amendements, réf. de gaine (irrigation), phytos/traitements, réf. graine/plant, travail du sol…
-  - → **Récolte** : date, **n° des sacs de stock**, quantité (frais), **qualité**, **date de péremption**…
-  - → **Transformation** (séchage, distillation, mondage, congélation…) : intrant(s) + lot(s), procédé, **rendement** (frais → sec, plante → HE…), matière/lot **sortant**, opérateur, date.
-  - → **Production / Produit** (recette) : date, **nom de l'opérateur**, réf., **n° de lot**, **date de péremption**.
-  Depuis un produit fini, on doit pouvoir **remonter** jusqu'aux transformations, récoltes et parcelles d'origine (et redescendre). Alimente le futur cahier de culture / obligations sanitaires.
+  - **Parcelle** → **Planche** : amendements, réf. de gaine, phytos, réf. graine/plant, travail du sol…
+  - → **Récolte** : date (sessions), **n° des sacs**, quantité (frais), **qualité**, **date de péremption**…
+  - → **Séchage** : transformation primaire frais→sec (lots in/out, rendement, opérateur, date) — étape typique post-récolte.
+  - → **Transformation** : production / assemblage **recette → produit fini** (et, le cas échéant, autres transformations primaires intercalées : distillation, mondage, congélation…).
+  - → **Produit** : date, **opérateur**, réf., **n° de lot**, **DLUO**, **poids**, **notes**.
+  Depuis un produit fini, on doit pouvoir **remonter** jusqu’au séchage, aux récoltes, planches et parcelles (et redescendre).
+  **À chaque étape** de la chaîne (et à chaque étape de procédé en production) : saisie d’un **poids** et de **notes**.
 - **UC-C1.4** — Alerter si la matière en stock est **insuffisante** pour la production visée.
 
 ### C2. Suivre l'avancement des productions
@@ -218,7 +223,7 @@ Le socle de données. Reprend la logique des onglets `Ingredients`, `Recette Epi
 - **UC-E3.6** — Détecter les **conflits** : deux lots sur la même **planche** en même temps, dépassement de surface, fenêtre calendaire hors saison.
 
 ### E4. Récoltes
-- **UC-E4.1** — **Déclarer une récolte** (session) : lot de culture, **date**, quantité récoltée en frais, **qualité**, **n° des sacs de stock**, **emplacement**, **date de péremption**. Plusieurs sessions possibles sur un même lot : coupes successives **ou** vague étalée / **interrompue** (pluie, reprise quand plantes sèches) — sessions regroupables par `campagne_id`.
+- **UC-E4.1** — **Déclarer une récolte** (session) : lot de culture, **date**, **poids** (kg frais), **notes**, **qualité**, **n° des sacs de stock**, **emplacement**, **date de péremption**. Plusieurs sessions possibles sur un même lot : coupes successives **ou** vague étalée / **interrompue** (pluie, reprise quand plantes sèches) — sessions regroupables par `campagne_id`.
 - **UC-E4.2** — Chaque session **entre en stock matière** (frais, matière fermière) et **émet le webhook** `récolte déclarée`. Le passage **frais → sec** se fait ensuite via une **transformation** tracée (UC-C0), pas une conversion automatique.
 - **UC-E4.3** — **Suivi lot/planche/parcelle** : de la récolte on remonte au lot → **planche** → **parcelle** (traçabilité obligatoire), et en aval on relie aux productions qui l'ont consommée.
 - **UC-E4.4** — Suivre l'**état d'avancement des cultures** (semé / planté / en croissance / en récolte / terminé) par lot.
@@ -232,7 +237,7 @@ Le socle de données. Reprend la logique des onglets `Ingredients`, `Recette Epi
 - **UC-F1.6** — **Contrainte eau** : intégrer le **besoin en eau** par espèce et un budget eau (par parcelle / global, ex. ~420 m³/an) pour arbitrer et proposer une **sélection à faible besoin en eau** (cf. onglet `Selection faible eau`). Utiliser aussi les **associations** (UC-E2.3) pour suggérer/écarter des voisinages.
 - **UC-F1.3** — Rendre la proposition **modifiable** : l'exploitant ajuste volumes, **parcelles**, dates ; l'app recalcule le reste (surfaces, besoins couverts, cascade de dates).
 - **UC-F1.4** — Comparer **planifié vs besoin** : couverture des intentions par la culture + stock (manques / surplus).
-- **UC-F1.5** — `❓` Prendre en compte les **rotations** et la **pérennité** (vivaces vs annuelles) dans la proposition.
+- **UC-F1.5** — **Pérennité / rotations** : au V1, tenir compte des **vivaces déjà en place** (pas de replantation inutile) et afficher l’historique planche en info ; scoring rotation automatique = plus tard (CF-8).
 
 ---
 
@@ -261,9 +266,9 @@ Choix d'architecture : **API-first**. Le cœur métier est exposé par une **API
 - **UC-T1** — Recherche globale (produit, recette, plante, lot).
 - **UC-T2** — Tableau de bord d'accueil (alertes stock, productions en cours, prochaines étapes de culture de la semaine).
 - **UC-T3** — **Import initial souhaitable** (Q-T1) : reprendre matières/recettes/conditionnements/produits depuis `Recettes et production - v19.xlsx` (et fiches Obsidian) pour éviter la ressaisie. À cadrer.
-- **UC-T4** — `❓` Historique / journal des modifications (onglet `Log`).
+- **UC-T4** — **Journal d’audit léger** : qui / quand / entité / action (pas de revert auto) — voir [[T - Transverses (spec)]].
 - **UC-T5** — **Export CSV basique** au V1 (Q-T2) ; étiquettes/compta plus tard.
-- **UC-T6** — `❓` Sauvegarde / restauration des données.
+- **UC-T6** — **Sauvegarde** téléchargeable (admin) ; restauration = procédure ops hors UI V1.
 - **UC-T7** — **Intégrité référentielle garantie** : l'app impose automatiquement les contrôles aujourd'hui manuels dans la « [[Méthode de contribution Recette Epice]] » — pas d'ingrédient de recette absent du référentiel matières, pas de produit orphelin, noms uniques/stables, propagation des renommages. Remplace la vérification manuelle du classeur.
 - **UC-T8** — **Statistiques** : une **page statistique générale** (vue d'ensemble : CA, marges, stock, avancement cultures) **+ une page par topic** :
   - **Ventes** : CA par période / produit / point de vente, réalisé vs intentions.

@@ -30,12 +30,12 @@ Journal des décisions prises pendant le brainstorming, et liste des points enco
 | D7 | **Volet import / achats** | Matières achetées (hors ferme), en **deux provenances** : **Matière d'importation** 🟠 (agricole, cultivée ailleurs — poivre, cannelle…) et **Consommable de base** ⚪ (non cultivable — sel, sucre, vinaigre, alcool neutre, huile…). Prix d'achat/kg (ou /L) → **coût de revient recette** (UC-A1.5/A1.6 → A2.5 → marge A4). Entrées via **achats**, suivies en stock matière. |
 | D13 | **Vocabulaire** | Termes distincts imposés partout : **Produit fini** (vendu) · **Matière fermière** 🟢 (cultivée ferme) · **Matière d'importation** 🟠 (cultivée hors ferme, achetée) · **Consommable de base** ⚪ (non cultivable, achetée). « Matière » = générique des 3, avec un champ **provenance**. Glossaire = §1 de [[00 - Cas d'utilisation]]. |
 | D8 | **Storefront** | = **front de vente interne** (saisie rapide des ventes, déstockage, webhooks). Pas de boutique publique / paiement en ligne au V1. Une boutique publique pourra se brancher plus tard sur la même API. |
-| D9 | **Points de vente & historique** | **Au V1** : gérer les points de vente / canaux (ferme, marché, demi-gros : parapharmacies, SPA, masseurs, herboristes, kinés) et un **historique des ventes** filtrable, rattaché aux points de vente (UC-B2.5, UC-B3). |
+| D9 | **Clients, PdV, commandes & historique** | **Au V1** : **fiches clients** + historique (commandes, ventes, notes) ; **points de vente** = canaux (jours/dates livraison) ; **commandes** (client + canal + `date_livraison`) ; ventes directes (client optionnel) + ventes issues des livraisons. Voir [[B - Commercial (spec)]]. |
 | D10 | **Pas de vue pluriannuelle** | L'app raisonne **en année civile** (D2) ; la vue business-plan N1→N9 (revenu brut/net par année de l'onglet `Produit`) **reste dans Excel**, hors app. |
 | D11 | **Temps de travail** | Agréger le **temps requis** des étapes (recette + culture) → temps main d'œuvre par lot/unité ; **taux horaire** paramétrable → coût main d'œuvre **optionnel** dans le prix de revient (UC-A4.6) et vue charge (UC-T8). |
 | D12 | **Statistiques** | Une **page stats générale** + **une page par topic** (ventes, production, stock, culture, marges, charge de travail) (UC-T8). |
 | D14 | **Multi-utilisateur** | **Multi-utilisateur dès le V1** (Q-U1), auth simple **login/mot de passe**. Le **nom de l'opérateur** est tracé sur les actions (production, récolte…). Rôles/permissions fins = plus tard. |
-| D15 | **Traçabilité obligatoire** | Chaîne **Parcelle → Planche → Récolte → Transformation → Produit** obligatoire et remontable (Q-C1) : parcelle/planche (amendements, réf. gaine, phytos, réf. graine) → récolte (date session, n° sacs, quantité, qualité, DLUO ; **multi-sessions** possibles pour une même vague) → **transformation** → production/produit. **DLUO/péremption** (Q-D1) et **emplacements** select+créer (Q-D2) dans le périmètre. |
+| D15 | **Traçabilité obligatoire** | Chaîne **Parcelle → Planche → Récolte → Séchage → Transformation → Produit** obligatoire et remontable (Q-C1). **Séchage** = C0 `type=sechage` ; **Transformation** = production C1 ; autres C0 intercalés si besoin. **À chaque étape** : saisie d’un **poids** (`poids_kg`) et de **notes** (texte libre) — voir CC-12 / CE-14. Parcelle/planche (journals) → récolte (sessions, sacs, poids, notes, DLUO) → séchage (poids in/out, notes) → transformation/production (poids, notes, y compris par étape de procédé) → produit (poids, notes, n° lot, DLUO). **DLUO** (Q-D1) et **emplacements** (Q-D2) dans le périmètre. |
 | D18 | **Transformation = domaine distinct** | La **transformation primaire** (matière → matière : séchage, distillation, mondage…) est une opération **tracée à part**, distincte de la production par recette (assemblage → produit fini). Le séchage frais→sec devient un **événement tracé** (UC-C0), pas une conversion auto. Webhook `transformation déclarée`. |
 | D16 | **Culture : Parcelle + Planche, pas d’« espace »** | Pas d'entité espace (Q-E4) : **Parcelle** (lettres + vocation) + **Planche** (numéros, unité opérationnelle, code D6). Images **annotées avant upload** (pas de SIG, Q-E5). Historique **journalier** sur la planche. Données de culture propres au **lot & à l'année** (Q-E7). |
 | D17 | **API & webhooks** | **API REST** (Q-G2), **clé d'API** simple (Q-G4). Webhooks **configurables par JSON** `nom.du.hook → [urls]` (Q-G3), chacun **documenté**. Prix matière **historisés** `{date:prix}`, exposés dans l'API (Q-A3). |
@@ -67,7 +67,7 @@ Journal des décisions prises pendant le brainstorming, et liste des points enco
 | #    | Question                                                 | Défaut V1 proposé                                                                                             |
 | ---- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | Q-B1 | Granularité intentions (UC-B1.1)                         | **Par année civile** (cohérent D2) ; répartition mensuelle plus tard.                                         |
-| Q-B2 | Canaux / points de vente (UC-B3)                         | ✅ Résolu → D9 : **points de vente gérés au V1**. Gestion **clients** (nominatifs) = hors V1.                  |
+| Q-B2 | Canaux / points de vente (UC-B3)                         | ✅ PdV = **canaux** ; **clients** = fiches + historique (voir D9 / [[B - Commercial (spec)]]). |
 | Q-B3 | Ventes marché (UC-B2.4)                                  | **Saisie agrégée** par jour de vente / par produit.<br>Permet de declaer une vente via API                    |
 | Q-B4 | Rattacher les **intentions** aussi à un point de vente ? | non                                                                                                           |
 | Q-B5 | Taux horaire main d'œuvre (UC-A4.6/D11)                  | Un **taux global** paramétrable et taux par tâche plus tard (si on renseigné conserver la valuer par default) |
@@ -75,8 +75,9 @@ Journal des décisions prises pendant le brainstorming, et liste des points enco
 ### Production (C)
 | #    | Question                            | Défaut V1 proposé                                                                                                                                                                                                                        |
 | ---- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Q-C1 | Traçabilité lot (UC-C1.3)           | Parcelle de culture (amendement, ref de gaine, phyto, ...) -> Récolte (date, numero des sacs de stock, quantité, qualité, date péremption, ...)  -> Produit (date, nom de l'employer, ref, no e lot, date péremption)<br>**Obligatoire** |
-| Q-C2 | Planifier les productions (UC-C2.3) | **Enregistrer** + suivre l'avancement ; pas d'ordonnancement charge/semaine au V1.                                                                                                                                                       |
+| Q-C1 | Traçabilité lot (UC-C1.3) | **Parcelle → Planche → Récolte → Séchage → Transformation → Produit** (obligatoire). Séchage = C0 `sechage` ; Transformation = production C1 (+ autres C0 éventuels dans le graphe). |
+| Q-C2 | Planifier les productions (UC-C2.3) | **Enregistrer** + suivre l'avancement ; pas d'ordonnancement charge/semaine au V1. |
+| Q-C3 | Paramètres transformation (temp., durée…) | ✅ JSON libre optionnel (`temperature_c`, `duree_min`…) — [[C - Production & transformation (spec)]] CC-3. |
 
 ### Stock (D)
 | #    | Question                           | Défaut V1 proposé             |
@@ -89,7 +90,7 @@ Journal des décisions prises pendant le brainstorming, et liste des points enco
 | ---- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Q-G1 | Storefront = boutique publique ou front interne ? | ✅ Résolu → D8 : **front de vente interne** au V1.                                                                                                                                                                                                                   |
 | Q-G2 | Style d'API : REST                                | **REST** par défaut (simple, bien outillé )                                                                                                                                                                                                                         |
-| Q-G3 | Webhooks : rejeu/retry en cas d'échec au V1 ?     | JSON present dans l'appli avec tout les clefs (documentions par hook simple mais complete)<br>```<br>{<br>   "nom.du.hook" : [<br>       "url-a-appler-1",<br>       "url-a-appler-2",	   <br>   ]<br>}<br>```<br>À ajouter dans la doc de l'API et cell de webhook |
+| Q-G3 | Webhooks : rejeu/retry en cas d'échec au V1 ? | ✅ Config JSON event→urls ; payload versionné ; **1 tentative** + log ; **rejeu manuel** ; pas de retry auto V1 — [[G - Plateforme (spec)]] CG-6. |
 | Q-G4 | Auth API pour intégrations externes               | Clé d'API simple                                                                                                                                                                                                                                                    |
 
 ### Culture (E)
@@ -102,14 +103,17 @@ Journal des décisions prises pendant le brainstorming, et liste des points enco
 | Q-E5 | Géométrie/coordonnées des parcelles                                 | Permettre d'afficher des images (elle serons aonotées avant upload)                                                                                                                                                                                                     |
 | Q-E6 | Stockage des images du carrousel parcelle                           | Upload fichiers ; `❓` où (serveur Hostinger / dossier). À cadrer à la spec technique. cf -> [Guide technique pour développeurs](obsidian://open?vault=le-chaudron-qui-sent-bon-obsidian&file=obsidian%2F98%20-%20WebApp%2FGuide%20technique%20pour%20d%C3%A9veloppeurs) |
 | Q-E7 | Rendement (t/ha) par espèce pour dériver les surfaces (F)           | **Oui** : attribut espèce, ajustable par lot. Base du calcul surface ↔ volume.<br>Pour chaque culture, conserver toutes les informations dont celle-là (qui ne seront pas les memes par années)                                                                         |
-| Q-E8 | Associations de cultures (UC-E2.3) exploitées par la planif au V1 ? | Consignées au V1 (données) ; **alertes/suggestions** automatiques plus tard.                                                                                                                                                                                            |
-| Q-E9 | Contrainte eau dans la planif (UC-F1.6) au V1 ?                     | Besoin en eau **affiché/filtrable** au V1 ; arbitrage automatique par budget eau plus tard.                                                                                                                                                                             |
+| Q-E8 | Associations de cultures (UC-E2.3) exploitées par la planif au V1 ? | Consignées au V1 (données) ; **alertes/suggestions** automatiques plus tard. Voir [[F - Planification (spec)]] CF-7. |
+| Q-E9 | Contrainte eau dans la planif (UC-F1.6) au V1 ?                     | Besoin en eau **affiché/filtrable** au V1 ; arbitrage automatique par budget eau plus tard. CF-6. |
+| Q-F1 | Rotations / pérennité (UC-F1.5) | ✅ V1 : vivaces en place + historique planche informatif ; scoring rotation plus tard — CF-8. |
 
 ### Transverse (T)
 | # | Question | Défaut V1 proposé |
 |---|----------|-------------------|
-| Q-T1 | Import initial (UC-T3) | **Oui, souhaitable** : import des matières/recettes/conditionnements/produits depuis v19.xlsx pour ne pas ressaisir. À cadrer. |
+| Q-T1 | Import initial (UC-T3) | **Oui** : import Excel v19 (preview + commit) — [[T - Transverses (spec)]]. |
 | Q-T2 | Exports (UC-T5) | Export CSV basique ; étiquettes/compta plus tard. |
+| Q-T4 | Journal des modifications (UC-T4) | ✅ AuditLog léger (qui/quand/entité/action/summary) — CT-4. |
+| Q-T6 | Sauvegarde / restauration (UC-T6) | ✅ Backup téléchargeable admin ; restore hors UI V1 — CT-6. |
 
 ---
 

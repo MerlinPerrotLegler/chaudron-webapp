@@ -118,6 +118,8 @@ erDiagram
 - `quantite_initiale`, `quantite_restante` (unités)
 - `date_entree`, `date_peremption` / DLUO (nullable mais **recommandée** — D15)
 - `numero_lot_production` (texte, nullable — lien C)
+- `poids_kg?` (copie depuis production / sortie — CC-12)
+- `notes?` (copie ou saisie à l’entrée stock)
 - `source_type` : `production` | `ajustement` | `transfert`
 - `source_id?`, `production_id?`
 - timestamps

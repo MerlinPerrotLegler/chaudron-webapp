@@ -6,7 +6,7 @@
 >
 > **Ordre de construction** (cf. `obsidian/00 - Cas d'utilisation.md` §4) : A → E → D → C → B → F ; G transverse dès A.
 
-**Dernière mise à jour** : 2026-07-23 (spec D Stock)
+**Dernière mise à jour** : 2026-07-23 (transverses T + settings S)
 
 ---
 
@@ -56,7 +56,7 @@
 - [ ] Plan 2 — Recettes (ingrédients, étapes, coût matière, temps)
 - [ ] Plan 3 — Conditionnements + Produits finis (revient, marge, recette simple)
 - [ ] Plan 4 — Écrans back-office Catalogue
-- [ ] Plan 5 — Auth multi-utilisateur + doc API/webhooks versionnée *(peut migrer vers G si on spécifie la plateforme avant)*
+- [ ] Plan 5 — Auth multi-utilisateur + doc API/webhooks → **absorbé par G1–G3** ([[G - Plateforme (spec)]])
 
 ---
 
@@ -121,98 +121,146 @@
 ## C. Production & transformation
 
 > Dépend de A + D (+ E pour la chaîne de traçabilité).
+> Spec métier : `obsidian/C - Production & transformation (spec).md`
 
 ### Spec métier
 
-- [ ] Spec `C - Production & transformation (spec).md`
-- [ ] Transformation primaire C0 (matière→matière, lots, rendement, webhook)
-- [ ] Production C1 (recette → produit fini, opérateur, lot, DLUO)
-- [ ] Traçabilité obligatoire Parcelle → Récolte → Transformation → Produit (remontable)
-- [ ] Alerte matière insuffisante
-- [ ] Suivi d’avancement productions (étapes) + tableau de bord goulots
-- [ ] API + webhooks `transformation.declaree`, `production.declaree`
-- [ ] Écrans déclaration & suivi
+- [x] Spec `C - Production & transformation (spec).md`
+- [x] Transformation primaire C0 (matière→matière, lots, rendement, webhook)
+- [x] Production C1 (recette → produit fini, opérateur, lot, DLUO)
+- [x] Traçabilité obligatoire **Parcelle → Planche → Récolte → Séchage → Transformation → Produit** (**poids + notes** à chaque étape)
+- [x] Alerte / 409 matière insuffisante
+- [x] Suivi d’avancement productions (étapes) + tableau de bord goulots
+- [x] API + webhooks `transformation.declaree`, `production.declaree`
+- [x] Écrans déclaration & suivi
 
 ### Plans
 
-- [ ] Plan(s) d’implémentation Production & transformation
+- [ ] Plan C1 — Transformations + stock + webhook
+- [ ] Plan C2 — Productions (besoins, terminer, stock, webhook)
+- [ ] Plan C3 — Avancement étapes + tableau de bord
+- [ ] Plan C4 — API traçabilité
+- [ ] Plan C5 — Écrans back-office
 
 ---
 
 ## B. Commercial
 
 > Dépend de A (+ D pour déstockage). Storefront avec G.
+> Spec métier : `obsidian/B - Commercial (spec).md`
 
 ### Spec métier
 
-- [ ] Spec `B - Commercial (spec).md`
-- [ ] Intentions de vente (année civile, priorité, CA/marge prévisionnels)
-- [ ] Dérivation besoins produits → besoins matière
-- [ ] Ventes réalisées (agrégées jour/produit, point de vente, API + storefront)
-- [ ] Comparaison réalisé vs intention
-- [ ] Historique des ventes filtrable
-- [ ] Points de vente / canaux (D9)
-- [ ] API Commercial + webhook `vente.realisee`
-- [ ] Écrans intentions / ventes / PdV
+- [x] Spec `B - Commercial (spec).md`
+- [x] **Fiches clients** + historique (commandes, ventes, notes)
+- [x] Intentions de vente (année civile, priorité, CA/marge prévisionnels)
+- [x] Dérivation besoins produits → besoins matière (+ carnet commandes)
+- [x] **Commandes** (client + canal PdV + `date_livraison`) ; déstockage à livraison
+- [x] Ventes réalisées (directes marché + via commande)
+- [x] Comparaison réalisé vs intention
+- [x] Historique des ventes filtrable
+- [x] Points de vente = **canaux** + jours/dates livraison (D9)
+- [x] API Commercial + webhooks `client.*` / `commande.*` / `vente.realisee`
+- [x] Écrans (clients, commandes, calendrier, intentions, ventes)
 
 ### Plans
 
-- [ ] Plan(s) d’implémentation Commercial
+- [ ] Plan B1 — Clients (+ notes/historique) + Points de vente + dates livraison
+- [ ] Plan B2 — Intentions + synthèse CA/marge
+- [ ] Plan B3 — Commandes (CRUD, statuts, lien client)
+- [ ] Plan B4 — Livrer → stock + ventes + historique client
+- [ ] Plan B5 — Ventes directes + réalisé vs intention + besoins + calendrier / écrans
 
 ---
 
 ## F. Planification
 
 > Arrive en dernier : agrège B, D, E.
+> Spec métier : `obsidian/F - Planification (spec).md`
 
 ### Spec métier
 
-- [ ] Spec `F - Planification (spec).md`
-- [ ] Proposition planning (intentions → besoins → surfaces, stock, vivaces, priorités)
-- [ ] Affectation parcelles (faisabilité 🟢🟡🔴)
-- [ ] Contrainte eau (affichage/filtre V1 — Q-E9 ; arbitrage auto plus tard)
-- [ ] Proposition modifiable + recalcul
-- [ ] Comparaison planifié vs besoin
-- [ ] Rotations / pérennité (`❓` UC-F1.5 — trancher)
-- [ ] API / écrans moteur de proposition
+- [x] Spec `F - Planification (spec).md`
+- [x] Proposition planning (intentions → besoins → surfaces, stock, vivaces, priorités)
+- [x] Affectation **planches** (faisabilité 🟢🟡🔴)
+- [x] Contrainte eau (affichage/filtre V1 — Q-E9)
+- [x] Proposition modifiable + recalcul
+- [x] Comparaison planifié vs besoin
+- [x] Rotations / pérennité V1 : vivaces en place + historique info (CF-8) ; scoring auto plus tard
+- [x] API / écrans moteur de proposition
 
 ### Plans
 
-- [ ] Plan(s) d’implémentation Planification
+- [ ] Plan F1 — Calcul besoins + surfaces
+- [ ] Plan F2 — Affectation planches + faisabilité
+- [ ] Plan F3 — Édition + recalcul + couverture
+- [ ] Plan F4 — Appliquer → Lots Culture
+- [ ] Plan F5 — Écrans + filtre eau + vivaces
 
 ---
 
 ## G. Plateforme (transverse)
 
-> Posée dès A, enrichie à chaque domaine. Spec dédiée pour unifier conventions.
+> Posée dès A, enrichie à chaque domaine. Spec : `obsidian/G - Plateforme (spec).md`
 
 ### Spec métier
 
-- [ ] Spec `G - Plateforme (spec).md`
-- [ ] Conventions API REST communes (erreurs, pagination, versioning payloads)
-- [ ] Auth : clé d’API + login/mot de passe multi-utilisateur (D14) ; opérateur tracé
-- [ ] Catalogue des webhooks (registre, config JSON, doc contrats versionnés, retry V1 ?)
-- [ ] Storefront = front de vente interne (D8) — écrans & flux
-- [ ] Uploads / stockage fichiers (images parcelles — Q-E6 / guide Hostinger)
-- [ ] Hors V1 explicite : module comptable (consommateur webhooks), boutique publique
+- [x] Spec `G - Plateforme (spec).md`
+- [x] Conventions API REST communes (erreurs, pagination, versioning payloads)
+- [x] Auth : clé d’API + login/mot de passe multi-utilisateur (D14) ; opérateur tracé
+- [x] Catalogue des webhooks (registre, config JSON, doc, log ; retry auto = non V1)
+- [x] Storefront = front de vente interne (D8)
+- [x] Uploads / stockage fichiers (Hostinger)
+- [x] Hors V1 explicite : compta, boutique publique, rôles fins
 
 ### Plans
 
-- [ ] Plan auth & webhooks (peut réutiliser / absorber Catalogue Plan 5)
-- [ ] Plan storefront (avec domaine B)
+- [ ] Plan G1 — Auth login/session + Utilisateurs
+- [ ] Plan G2 — Clés API + middleware auth
+- [ ] Plan G3 — Webhooks emit + config + log + rejeu manuel
+- [ ] Plan G4 — Storefront UI vente rapide
+- [ ] Plan G5 — Uploads + recherche globale
 
 ---
 
 ## Transverse (T)
 
-- [ ] Spec ou section dédiée **Recherche globale** (UC-T1)
-- [ ] Spec **Tableau de bord d’accueil** (UC-T2)
-- [ ] Spec **Import initial** depuis `Recettes et production - v19.xlsx` (UC-T3 / Q-T1) — souhaitable
-- [ ] Trancher **Journal des modifications** (UC-T4 `❓`)
-- [ ] Spec **Export CSV** basique (UC-T5)
-- [ ] Trancher **Sauvegarde / restauration** (UC-T6 `❓`)
-- [ ] Intégrité référentielle (UC-T7) — déjà dans spec A ; généraliser dans chaque domaine
-- [ ] Spec **Statistiques** (UC-T8 / D12) : page générale + pages ventes / production / stock / culture / marges / charge
+> Spec : `obsidian/T - Transverses (spec).md`
+
+- [x] Spec **Recherche globale** (UC-T1)
+- [x] Spec **Tableau de bord d’accueil** (UC-T2)
+- [x] Spec **Import initial** Excel v19 (UC-T3)
+- [x] **Journal / audit** léger (UC-T4) — CT-4
+- [x] Spec **Export CSV** (UC-T5)
+- [x] **Sauvegarde** download admin ; restore hors UI (UC-T6) — CT-6
+- [x] Intégrité référentielle (UC-T7) — rappel transverse
+- [x] Spec **Statistiques** (UC-T8 / D12)
+
+### Plans
+
+- [ ] Plan T1 — Search + dashboard
+- [ ] Plan T2 — Export CSV + AuditLog
+- [ ] Plan T3 — Stats générale + ventes/marges
+- [ ] Plan T4 — Stats production/stock/culture/charge
+- [ ] Plan T5 — Import Excel + backup download
+
+---
+
+## Réglages & apparence (S)
+
+> Spec : `obsidian/S - Réglages & apparence (spec).md`
+
+- [x] Spec hub `/settings` (apparence, identité, métier, admin)
+- [x] Thème CSS variables + logo + presets polices
+- [x] Lien Parametres métier (A/D) sans double source
+- [x] Defaults visuels (éviter clichés purple / cream-terracotta)
+
+### Plans
+
+- [ ] Plan S1 — AppSettings + API + injection CSS
+- [ ] Plan S2 — Écran apparence + logo
+- [ ] Plan S3 — Hub settings (identité, métier, liens admin)
+- [ ] Plan S4 — Densité + branding storefront
 
 ---
 
@@ -223,15 +271,15 @@
 ### Encore floues / à confirmer
 
 - [ ] Q-A — Référentiel **fournisseurs** dédié vs champ texte V1 *(texte acté V1 dans D)*
-- [ ] Q-C — Paramètres optionnels des transformations (température, durée…) — quels champs V1
-- [ ] Q-F — Rotations / pérennité dans la proposition (UC-F1.5)
-- [ ] Q-G3 — **Retry / rejeu** webhooks en cas d’échec au V1
-- [ ] Q-T4 — Historique / journal des modifications
-- [ ] Q-T6 — Sauvegarde / restauration
+- [x] Q-C — Paramètres transformations V1 = JSON libre (CC-3 [[C - Production & transformation (spec)]])
+- [x] Q-F — Rotations / pérennité V1 → CF-8 (vivaces + info historique ; scoring plus tard)
+- [x] Q-G3 — **Retry auto webhooks** = non V1 ; log + rejeu manuel (CG-6)
+- [x] Q-T4 — AuditLog léger (CT-4 [[T - Transverses (spec)]])
+- [x] Q-T6 — Backup download ; restore hors UI (CT-6)
 - [ ] Q-U — Rôles / permissions différenciés (reporté « plus tard » — confirmer hors V1)
 - [x] Stock mini alerte matières / produits → CD-5 [[D - Stock (spec)]]
-- [ ] Contact sur points de vente (UC-B3.1 `❓`)
-- [ ] Import en masse des ventes (UC-B2.4 `❓`)
+- [x] Contact sur points de vente → champ texte V1 (CB-7)
+- [ ] Import en masse des ventes (UC-B2.4 `❓`) — hors V1
 
 ### Défauts V1 déjà proposés (à valider formellement si pas encore actés D*)
 
@@ -247,9 +295,10 @@
 
 ## Prochaine étape suggérée
 
-1. **Rédiger la spec C — Production & transformation** (consomme D + E), **ou**
-2. **Rédiger la spec G — Plateforme** (conventions API/auth/webhooks), **ou**
-3. **Rédiger la spec B — Commercial** (ventes / intentions, déstockage produit).
+La **spécification métier + transverse + settings** est complète.
+
+1. Commencer l’**implémentation** (Catalogue Plan 1 / G1 auth), **ou**
+2. Relire / valider une spec précise avant code.
 
 ---
 
@@ -262,3 +311,12 @@
 | 2026-07-23 | Spec E ajustée : Parcelle seule entité ; **tout en jours** ; multi-récoltes actées ; D2 précisé |
 | 2026-07-23 | Spec E / D6–D16 : **Parcelle (lettres) + Planche (numéros)** ; récoltes multi-sessions / `campagne_id` (pluie) |
 | 2026-07-23 | Spec `D - Stock (spec).md` ; Q-D1/Q-D2 et `stock_mini` actés ; plans D1–D5 listés |
+| 2026-07-23 | Spec `C - Production & transformation (spec).md` ; plans C1–C5 ; params transfo = JSON libre |
+| 2026-07-23 | Traçabilité canonique : **… → Récolte → Séchage → Transformation → Produit** (D15 / AI / UC / C) |
+| 2026-07-23 | CC-12 / CE-14 : **poids + notes** à chaque étape de la chaîne et chaque étape de procédé |
+| 2026-07-23 | Spec `B - Commercial (spec).md` ; plans B1–B5 |
+| 2026-07-23 | B enrichi : **commandes** + **dates de livraison** PdV (CB-10…14, D9) |
+| 2026-07-23 | B : **fiches clients** + historique (CB-15…17) ; PdV = canal |
+| 2026-07-23 | Spec `G - Plateforme (spec).md` ; plans G1–G5 ; Q-G3 acté (pas de retry auto) |
+| 2026-07-23 | Spec `F - Planification (spec).md` ; plans F1–F5 ; UC-F1.5 tranché (CF-8) |
+| 2026-07-23 | Specs `T - Transverses` + `S - Réglages & apparence` ; Q-T4/T6 tranchés |

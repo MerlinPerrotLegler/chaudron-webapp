@@ -65,6 +65,7 @@ Les « espaces » Obsidian (serre, tunnel, frais…) = **`vocation`** de la **Pa
 | CE-11 | Archivage (pas de suppression dure) Parcelle, Planche, Espèce, Lot référencés. |
 | CE-12 | Récolte : `matiere_id` **requis** (matière fermière de l’espèce). |
 | CE-13 | **Multi-récoltes / multi-sessions** par lot : (a) coupes successives ; (b) **même vague** impossible en une journée ou **interrompue** (pluie…) puis reprise plus tard quand les plantes sont sèches. Chaque session = un enregistrement `Recolte` ; `campagne_id` optionnel pour regrouper les sessions d’une même vague. |
+| CE-14 | **Poids + notes** sur chaque session de récolte (`poids_kg` obligatoire, `notes` toujours saisissable) — aligné CC-12 / D15. Idem sur lot de culture (`notes` ; `poids` non requis à la création du lot). |
 
 ---
 
@@ -167,13 +168,13 @@ erDiagram
 
 **Recolte**
 - `id`, `lot_id`, `date` (jour de la **session**)
-- `quantite_kg_frais` (> 0) — quantité de **cette** session
+- `poids_kg` / `quantite_kg_frais` (> 0) — **poids** de cette session (CE-14 / CC-12)
 - `qualite` : `A` | `B` | `C` | `autre` (+ `qualite_notes`)
 - `numeros_sacs` (liste)
 - `emplacement` (texte V1 ; FK Stock plus tard)
 - `date_peremption?`
-- `campagne_id` (nullable UUID) — **même vague** multi-jours (pluie, reprise quand plantes sèches…)
-- `notes?` (ex. « interrompu pluie — reprise prévue »)
+- `campagne_id` (nullable UUID)
+- `notes` (texte libre — pluie, reprise, qualité visuelle… ; **toujours** présent en UI)
 - `operateur_id` / `operateur_nom`
 - `matiere_id` (requis, CE-12)
 - `stock_mouvement_id?`
@@ -276,7 +277,7 @@ Jours / dates civiles uniquement.
 | `planche.creee` / `planche.maj` | `id, code, parcelle_id, numero, surface_m2` |
 | `lot.cree` / `lot.maj` / `lot.etat_change` | `id, espece_id, planche_id, annee, etat, surface_m2` |
 | `lot.planning_maj` | `lot_id, etapes[{id,ordre,date_prevue}]` |
-| `recolte.declaree` | `id, lot_id, date, quantite_kg_frais, matiere_id, campagne_id?, numeros_sacs, emplacement, date_peremption` |
+| `recolte.declaree` | `id, lot_id, date, poids_kg, matiere_id, campagne_id?, numeros_sacs, emplacement, date_peremption, notes` |
 | `planche.entrant_ajoute` | `planche_id, type, date, produit, quantite` |
 
 ---
@@ -296,7 +297,7 @@ Jours / dates civiles uniquement.
 - Alertes associations auto, budget eau auto, moteur F — plus tard.
 - Emplacement récolte = FK Stock (D) plus tard.
 - Espèce sans matière : OK ; récolte exige matière (CE-12).
-- Traçabilité affichée : **Parcelle → Planche → Récolte → …** (D15 enrichi).
+- Traçabilité affichée : **Parcelle → Planche → Récolte → Séchage → Transformation → Produit** (D15).
 
 ---
 
