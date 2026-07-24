@@ -7,7 +7,7 @@
 >
 > **Ordre d’implémentation** : socle technique minimal → **A → E → D → C → B → F** ; T/S en continu / en fin ; **login/session (G1) en dernier**. Branche de travail : **`main`** (commits atomiques).
 
-**Dernière mise à jour** : 2026-07-24 (UI Production C5)
+**Dernière mise à jour** : 2026-07-24 (UI Planification F5)
 
 ---
 
@@ -16,8 +16,8 @@
 | Volet | Avancement | Commentaire |
 |-------|------------|-------------|
 | **Spécification** | **~98 %** | Specs A→G + T + S rédigées ; reste polish mineur / questions mineures |
-| **Implémentation code** | **~92 %** | Shell + domaines UI (A/B/D/E/**C**) + storefront ; reste Planif UI + G1 |
-| **Projet V1 (pondéré)** | **~93 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×92 ≈ 93 %` |
+| **Implémentation code** | **~94 %** | Domaines UI + storefront ; reste Settings UI polish + G1 |
+| **Projet V1 (pondéré)** | **~95 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×94 ≈ 95 %` |
 
 > Mettre à jour la ligne **Implémentation** et le **total pondéré** à chaque fin de plan (G1, A1…).
 
@@ -40,8 +40,8 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | **P4** | Stock (**D1–D4**) | 11 % | ~80 % | ~9 |
 | **P5** | Production & traçabilité (**C1–C4**) | 12 % | ~70 % | ~8 |
 | **P6** | Commercial (**B1–B4**) | 13 % | ~85 % | ~11 |
-| **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | ~95 % | ~11,5 |
-| **P8** | Planification (**F1–F5**) | 7 % | ~80 % | ~5,5 |
+| **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | **100 %** | 12 |
+| **P8** | Planification (**F1–F5**) | 7 % | **100 %** | 7 |
 | **P9** | Transverses (**T1–T5**) + Réglages (**S1–S4**) + uploads/search **G5** | 7 % | ~35 % | ~2,5 |
 | | **Total implémentation** | **100 %** | | **~78 %** |
 
@@ -55,7 +55,7 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | **D** Stock | D1–D4 ✅ (cœur) · D5 UI | 12 % | ~75 % | Achats, FIFO, récolte→stock, alertes |
 | **C** Production | C1–C2 ✅ · C5 UI ✅ · C3–C4 partiel | 13 % | ~75 % | Transfo + prod + UI ; traçabilité API plus tard |
 | **B** Commercial | B1–B4 ✅ · B5 UI | 14 % | ~75 % | API complète ; reste UI / calendrier riche |
-| **F** Planification | F1–F4 ✅ · F5 UI | 7 % | ~80 % | API propositions + apply ; reste UI |
+| **F** Planification | F1–F5 ✅ | 7 % | **100 %** | API + UI propositions |
 | **T** Transverses | T1–T5 | 5 % | 0 % | Dashboard tôt possible (T1 partiel) |
 | **S** Réglages | S1–S4 | 5 % | 0 % | Apparence tôt = gain UX |
 | | | **100 %** | | |
@@ -258,7 +258,7 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 - [x] Plan F2 — Affectation planches + faisabilité + non plaçables — **code**
 - [x] Plan F3 — Édition lignes + recalcul + couverture — **code**
 - [x] Plan F4 — Appliquer → Lots Culture — **code**
-- [ ] Plan F5 — Écrans + filtre eau + vivaces (UI)
+- [x] Plan F5 — Écrans + filtre eau + vivaces (UI) — **code livré**
 
 ---
 
@@ -400,3 +400,4 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | 2026-07-24 | **Stock UI** (alertes, soldes, achats, emplacements) ; ~87 % impl / ~89 % V1 |
 | 2026-07-24 | **Culture UI E5** (parcelles, planches, espèces, lots, récoltes) ; ~90 % impl / ~92 % V1 |
 | 2026-07-24 | **Production UI C5** (transformations, lots, équipements) ; ~92 % impl / ~93 % V1 |
+| 2026-07-24 | **Planification UI F5** (propositions, couverture, appliquer→lots) ; ~94 % impl / ~95 % V1 |
