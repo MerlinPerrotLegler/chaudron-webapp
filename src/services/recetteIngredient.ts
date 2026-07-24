@@ -8,6 +8,7 @@ export async function listIngredients(recetteId: number) {
   return prisma.recetteIngredient.findMany({
     where: { recetteId },
     orderBy: { ordre: 'asc' },
+    include: { matiere: { select: { id: true, nom: true } } },
   });
 }
 
