@@ -547,3 +547,57 @@ export async function listAlertesStock() {
 
   return alertes;
 }
+
+export async function listSoldesMatieres() {
+  const matieres = await prisma.matiere.findMany({
+    where: { archivee: false },
+    orderBy: { nom: 'asc' },
+  });
+  const agg = await prisma.lotStockMatiere.groupBy({
+    by: ['matiereId'],
+    where: { quantiteRestante: { gt: 0 } },
+    _sum: { quantiteRestante: true },
+  });
+  const map = new Map(agg.map((a) => [a.matiereId, a._sum.quantiteRestante ?? 0]));
+  return matieres.map((m) => ({
+    id: m.id,
+    nom: m.nom,
+    provenance: m.provenance,
+    uniteAchat: m.uniteAchat,
+    stockMini: m.stockMini,
+    solde: map.get(m.id) ?? 0,
+  }));
+}
+
+export async function listSoldesProduits() {
+  const produits = await prisma.produitFini.findMany({
+    where: { actif: true },
+    include: {
+      recette: { select: { nom: true } },
+      conditionnement: { select: { nom: true } },
+    },
+    orderBy: { id: 'asc' },
+  });
+  const agg = await prisma.lotStockProduit.groupBy({
+    by: ['produitFiniId'],
+    where: { quantiteRestante: { gt: 0 } },
+    _sum: { quantiteRestante: true },
+  });
+  const map = new Map(agg.map((a) => [a.produitFiniId, a._sum.quantiteRestante ?? 0]));
+  return produits.map((p) => ({
+    id: p.id,
+    nom: `${p.recette.nom} — ${p.conditionnement.nom}`,
+    solde: map.get(p.id) ?? 0,
+  }));
+}
+
+export async function listAchatsRecents(limit = 30) {
+  return prisma.achat.findMany({
+    take: limit,
+    orderBy: { date: 'desc' },
+    include: {
+      matiere: { select: { id: true, nom: true, uniteAchat: true } },
+      emplacement: { select: { id: true, nom: true } },
+    },
+  });
+}
