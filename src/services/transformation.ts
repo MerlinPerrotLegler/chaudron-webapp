@@ -105,3 +105,40 @@ export async function declareTransformation(input: {
 
   return updated;
 }
+
+export async function listTransformations(params: {
+  page?: number;
+  pageSize?: number;
+}) {
+  const page = params.page ?? 1;
+  const pageSize = params.pageSize ?? 50;
+  const [items, total] = await Promise.all([
+    prisma.transformation.findMany({
+      orderBy: { date: 'desc' },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      include: {
+        matiereOut: { select: { id: true, nom: true } },
+        lignesIn: {
+          include: { matiere: { select: { id: true, nom: true } } },
+        },
+      },
+    }),
+    prisma.transformation.count(),
+  ]);
+  return { items, total, page, pageSize };
+}
+
+export async function getTransformation(id: number) {
+  const t = await prisma.transformation.findUnique({
+    where: { id },
+    include: {
+      matiereOut: { select: { id: true, nom: true } },
+      lignesIn: {
+        include: { matiere: { select: { id: true, nom: true } } },
+      },
+    },
+  });
+  if (!t) throw new AppError('not_found', `Transformation ${id} introuvable`, 404);
+  return t;
+}

@@ -172,8 +172,52 @@ export async function terminerProduction(id: number) {
 export async function getProduction(id: number) {
   const p = await prisma.production.findUnique({
     where: { id },
-    include: { lignesMatiere: true, sorties: true, etapes: { orderBy: { ordre: 'asc' } } },
+    include: {
+      recette: { select: { id: true, nom: true } },
+      lignesMatiere: {
+        include: { matiere: { select: { id: true, nom: true } } },
+      },
+      sorties: {
+        include: {
+          produitFini: {
+            include: {
+              recette: { select: { nom: true } },
+              conditionnement: { select: { nom: true } },
+            },
+          },
+        },
+      },
+      etapes: { orderBy: { ordre: 'asc' } },
+    },
   });
   if (!p) throw new AppError('not_found', `Production ${id} introuvable`, 404);
   return p;
+}
+
+export async function listProductions(params: {
+  page?: number;
+  pageSize?: number;
+  statut?: string;
+}) {
+  const page = params.page ?? 1;
+  const pageSize = params.pageSize ?? 50;
+  const where = {
+    ...(params.statut
+      ? { statut: params.statut as 'brouillon' | 'en_cours' | 'terminee' | 'annulee' }
+      : {}),
+  };
+  const [items, total] = await Promise.all([
+    prisma.production.findMany({
+      where,
+      orderBy: { date: 'desc' },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+      include: {
+        recette: { select: { id: true, nom: true } },
+        sorties: true,
+      },
+    }),
+    prisma.production.count({ where }),
+  ]);
+  return { items, total, page, pageSize };
 }
