@@ -236,7 +236,7 @@ export async function livrerCommande(
         source: 'commande',
         commandeId: c.id,
         commandeLigneId: l.id,
-        operateurNom: input.operateurNom ?? c.operateurNom,
+        operateurNom: input.operateurNom ?? c.operateurNom ?? undefined,
       },
     });
     const out = await sortirProduitPourVente({
@@ -244,7 +244,7 @@ export async function livrerCommande(
       quantiteUnites: l.quantite,
       date: dateLivraison,
       venteId: vente.id,
-      operateurNom: input.operateurNom ?? c.operateurNom,
+      operateurNom: input.operateurNom ?? c.operateurNom ?? undefined,
     });
     await prisma.venteLigne.update({
       where: { id: vente.id },

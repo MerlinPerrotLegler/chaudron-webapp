@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #3f5d4a;
+  --color-accent: #c4a35a;
+  --color-bg: #fafaf8;
+  --color-fg: #1c1c1a;
+  --radius: 4px;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-theme px-4 py-2 text-sm font-medium transition;
+  }
+  .btn-primary {
+    @apply btn bg-primary text-white hover:opacity-90;
+  }
+  .btn-ghost {
+    @apply btn border bg-transparent;
+    border-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+  }
+  .btn-ghost:hover {
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  }
+  .field {
+    @apply w-full rounded-theme border bg-white px-3 py-2 text-base outline-none;
+    border-color: color-mix(in srgb, var(--color-fg) 15%, transparent);
+    color: var(--color-fg);
+  }
+  .field:focus {
+    border-color: var(--color-primary);
+  }
+  .label {
+    @apply mb-1 block text-sm font-medium;
+    color: color-mix(in srgb, var(--color-fg) 80%, transparent);
+  }
+  .card {
+    @apply rounded-theme border bg-white p-4 shadow-sm;
+    border-color: color-mix(in srgb, var(--color-fg) 10%, transparent);
+  }
+}

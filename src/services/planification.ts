@@ -93,7 +93,7 @@ export async function genererProposition(input: {
     data: { statut: 'archivee' },
   });
 
-  const lignesData: Prisma.PropositionLigneCreateWithoutPropositionInput[] = [];
+  const lignesData: Prisma.PropositionLigneUncheckedCreateWithoutPropositionInput[] = [];
 
   // Track remaining free surface per planche during allocation
   const planches = await prisma.planche.findMany({

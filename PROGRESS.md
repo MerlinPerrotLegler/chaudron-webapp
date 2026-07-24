@@ -16,8 +16,8 @@
 | Volet | Avancement | Commentaire |
 |-------|------------|-------------|
 | **Spécification** | **~98 %** | Specs A→G + T + S rédigées ; reste polish mineur / questions mineures |
-| **Implémentation code** | **~78 %** | API domaines A–F + settings/search/dashboard ; **reste UI + G1** |
-| **Projet V1 (pondéré)** | **~82 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×78 ≈ 82 %` |
+| **Implémentation code** | **~81 %** | API A–F + shell UI + dashboard + storefront ; reste CRUD UI domaines + G1 |
+| **Projet V1 (pondéré)** | **~84 %** | Formule : `0,20 × spec + 0,80 × impl` → `0,20×98 + 0,80×81 ≈ 84 %` |
 
 > Mettre à jour la ligne **Implémentation** et le **total pondéré** à chaque fin de plan (G1, A1…).
 
@@ -40,7 +40,7 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | **P4** | Stock (**D1–D4**) | 11 % | ~80 % | ~9 |
 | **P5** | Production & traçabilité (**C1–C4**) | 12 % | ~70 % | ~8 |
 | **P6** | Commercial (**B1–B4**) | 13 % | ~85 % | ~11 |
-| **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | 0 % | 0 |
+| **P7** | UI domaines (écrans A4, E5, D5, C5, B5) + storefront **G4** | 12 % | ~25 % | ~3 |
 | **P8** | Planification (**F1–F5**) | 7 % | ~80 % | ~5,5 |
 | **P9** | Transverses (**T1–T5**) + Réglages (**S1–S4**) + uploads/search **G5** | 7 % | ~35 % | ~2,5 |
 | | **Total implémentation** | **100 %** | | **~78 %** |
@@ -394,3 +394,4 @@ Poids = part approximative de l’effort d’implémentation V1 (total **100 %**
 | 2026-07-24 | **Commercial B** (clients, PdV, commandes, ventes, intentions) ; 65 tests ; ~71 % impl |
 | 2026-07-24 | **Planification F** (propositions, affectation, apply→lots) ; ~76 % impl / ~80 % V1 |
 | 2026-07-24 | **Settings S1** + search/dashboard T1–T2 ; ~78 % impl / ~82 % V1 |
+| 2026-07-24 | **UI shell** + dashboard + storefront (Tailwind) ; ~81 % impl / ~84 % V1 |
