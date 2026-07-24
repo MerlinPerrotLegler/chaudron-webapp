@@ -99,6 +99,7 @@ export async function listRecoltes(params: {
       orderBy: { date: 'desc' },
       skip: (page - 1) * pageSize,
       take: pageSize,
+      include: { matiere: { select: { id: true, nom: true } } },
     }),
     prisma.recolte.count({ where }),
   ]);

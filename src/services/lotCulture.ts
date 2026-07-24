@@ -126,7 +126,11 @@ export async function listLots(params: {
       orderBy: { id: 'asc' },
       skip: (page - 1) * pageSize,
       take: pageSize,
-      include: { etapes: { orderBy: { ordre: 'asc' } } },
+      include: {
+        etapes: { orderBy: { ordre: 'asc' } },
+        espece: { select: { id: true, nom: true } },
+        planche: { select: { id: true, code: true } },
+      },
     }),
     prisma.lotCulture.count({ where }),
   ]);

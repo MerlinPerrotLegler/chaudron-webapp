@@ -56,6 +56,7 @@ export async function listPlanches(params: {
       orderBy: { code: 'asc' },
       skip: (page - 1) * pageSize,
       take: pageSize,
+      include: { parcelle: { select: { id: true, code: true, vocation: true } } },
     }),
     prisma.planche.count({ where }),
   ]);
