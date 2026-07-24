@@ -372,6 +372,132 @@ export async function entrerProduitDepuisProduction(input: {
   return lot;
 }
 
+export async function sortirProduitPourVente(input: {
+  produitFiniId: number;
+  quantiteUnites: number;
+  date: string;
+  venteId?: number;
+  lotIds?: number[];
+  operateurNom?: string;
+}) {
+  const disponible = await soldeProduit(input.produitFiniId);
+  if (disponible < input.quantiteUnites) {
+    throw new AppError('STOCK_INSUFFISANT', 'Stock produit insuffisant', 409, {
+      produitFiniId: input.produitFiniId,
+      demande: input.quantiteUnites,
+      disponible,
+    });
+  }
+
+  const lots = await prisma.lotStockProduit.findMany({
+    where: {
+      produitFiniId: input.produitFiniId,
+      quantiteRestante: { gt: 0 },
+      ...(input.lotIds ? { id: { in: input.lotIds } } : {}),
+    },
+  });
+  lots.sort((a, b) => {
+    if (a.datePeremption && b.datePeremption) {
+      const d = a.datePeremption.getTime() - b.datePeremption.getTime();
+      if (d !== 0) return d;
+    } else if (a.datePeremption && !b.datePeremption) return -1;
+    else if (!a.datePeremption && b.datePeremption) return 1;
+    return a.dateEntree.getTime() - b.dateEntree.getTime();
+  });
+
+  let reste = input.quantiteUnites;
+  const mouvements: { lotId: number; quantite: number; mouvementId: number }[] = [];
+
+  await prisma.$transaction(async (tx) => {
+    for (const lot of lots) {
+      if (reste <= 0) break;
+      const fresh = await tx.lotStockProduit.findUniqueOrThrow({ where: { id: lot.id } });
+      const take = Math.min(fresh.quantiteRestante, reste);
+      if (take <= 0) continue;
+      await tx.lotStockProduit.update({
+        where: { id: lot.id },
+        data: { quantiteRestante: fresh.quantiteRestante - take },
+      });
+      const mv = await tx.mouvement.create({
+        data: {
+          date: parseDateOnly(input.date),
+          sens: 'sortie',
+          cible: 'produit',
+          lotProduitId: lot.id,
+          quantite: take,
+          operateurNom: input.operateurNom,
+          refType: 'vente',
+          refId: input.venteId,
+        },
+      });
+      mouvements.push({ lotId: lot.id, quantite: take, mouvementId: mv.id });
+      reste -= take;
+    }
+    if (reste > 0) {
+      throw new AppError('STOCK_INSUFFISANT', 'Stock produit insuffisant', 409, {
+        produitFiniId: input.produitFiniId,
+        demande: input.quantiteUnites,
+        disponible,
+      });
+    }
+  });
+
+  await emit('stock.mouvement', {
+    sens: 'sortie',
+    cible: 'produit',
+    produit_fini_id: input.produitFiniId,
+    quantite: input.quantiteUnites,
+    lots: mouvements,
+  });
+  return { mouvements };
+}
+
+export async function restockerProduitDepuisVente(input: {
+  produitFiniId: number;
+  quantiteUnites: number;
+  date: string;
+  venteId?: number;
+  operateurNom?: string;
+  notes?: string;
+}) {
+  const lot = await prisma.$transaction(async (tx) => {
+    const l = await tx.lotStockProduit.create({
+      data: {
+        produitFiniId: input.produitFiniId,
+        quantiteInitiale: input.quantiteUnites,
+        quantiteRestante: input.quantiteUnites,
+        dateEntree: parseDateOnly(input.date),
+        notes: input.notes ?? 'Retour annulation vente',
+        sourceType: 'ajustement',
+        sourceId: input.venteId,
+      },
+    });
+    await tx.mouvement.create({
+      data: {
+        date: parseDateOnly(input.date),
+        sens: 'entree',
+        cible: 'produit',
+        lotProduitId: l.id,
+        quantite: input.quantiteUnites,
+        operateurNom: input.operateurNom,
+        refType: 'vente_annulee',
+        refId: input.venteId,
+        motif: 'annulation_vente',
+      },
+    });
+    return l;
+  });
+
+  await emit('stock.mouvement', {
+    sens: 'entree',
+    cible: 'produit',
+    lot_id: lot.id,
+    quantite: input.quantiteUnites,
+    motif: 'annulation_vente',
+  });
+  return lot;
+}
+
 export async function listAlertesStock() {
   const params = await prisma.parametres.upsert({
     where: { id: 1 },

@@ -81,6 +81,7 @@ model Espece {
   risques              RisqueCulture[]
   faisabilites         Faisabilite[]
   lots                 LotCulture[]
+  propositionsLignes   PropositionLigne[]
 }
 
 enum CycleEspece {
@@ -198,6 +199,8 @@ model LotCulture {
   updatedAt              DateTime    @updatedAt
   etapes                 LotEtape[]
   recoltes               Recolte[]
+  propositionsLignesExistantes PropositionLigne[] @relation("LotExistant")
+  propositionsLignesCreees     PropositionLigne[] @relation("LotCree")
 
   @@index([plancheId, annee])
   @@index([especeId, annee])
@@ -385,6 +388,9 @@ model ProduitFini {
   updatedAt         DateTime        @updatedAt
   lotsStock         LotStockProduit[]
   productionSorties ProductionSortie[]
+  commandeLignes    CommandeLigne[]
+  intentions        IntentionVente[]
+  ventes            VenteLigne[]
 }
 
 model Parametres {
@@ -392,6 +398,34 @@ model Parametres {
   tauxHoraireMainOeuvre Float   @default(0)
   inclureMo             Boolean @default(true)
   seuilJoursAlerteDluo  Int     @default(30)
+  budgetEauM3An         Float?
+  rendementDefautKgHaSec Float  @default(500)
+}
+
+enum FontPreset {
+  serife_campagne
+  sans_lisible
+  mixte
+}
+
+enum RadiusPreset {
+  none
+  sm
+  md
+}
+
+model AppSettings {
+  id            Int          @id @default(1)
+  appName       String       @default("Le Chaudron qui sent bon")
+  timezone      String       @default("Europe/Paris")
+  colorPrimary  String       @default("#3F5D4A")
+  colorAccent   String       @default("#C4A35A")
+  colorBg       String       @default("#FAFAF8")
+  colorFg       String       @default("#1C1C1A")
+  fontPreset    FontPreset   @default(mixte)
+  logoPath      String?
+  radius        RadiusPreset @default(sm)
+  updatedAt     DateTime     @updatedAt
 }
 
 // ——— Domaine E : Culture (Plan E1) ———
@@ -450,6 +484,7 @@ model Planche {
   images         PlancheImage[]
   jours          PlancheJour[]
   lots           LotCulture[]
+  propositionsLignes PropositionLigne[]
 
   @@unique([parcelleId, numero])
 }
@@ -621,7 +656,224 @@ model ProductionEtape {
   finishedAt             DateTime?
 }
 
-// ——— Domaine D : Stock ———
+// ——— Domaine B : Commercial ———
+
+enum TypeClient {
+  particulier
+  professionnel
+  association
+  autre
+}
+
+enum TypePointVente {
+  ferme
+  marche
+  boutique_producteur
+  demi_gros
+  tournee
+  autre
+}
+
+enum StatutCommande {
+  brouillon
+  confirmee
+  preparee
+  livree
+  annulee
+}
+
+enum StatutVente {
+  validee
+  annulee
+}
+
+enum SourceVente {
+  directe
+  commande
+}
+
+model Client {
+  id                   Int         @id @default(autoincrement())
+  nom                  String      @unique
+  type                 TypeClient?
+  contactNom           String?
+  email                String?
+  telephone            String?
+  adresse              String?
+  codePostal           String?
+  ville                String?
+  conditionsLivraison  String?     @db.Text
+  notes                String?     @db.Text
+  archive              Boolean     @default(false)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  notesJournal         ClientNote[]
+  commandes            Commande[]
+  ventes               VenteLigne[]
+}
+
+model ClientNote {
+  id           Int      @id @default(autoincrement())
+  clientId     Int
+  client       Client   @relation(fields: [clientId], references: [id])
+  date         DateTime @db.Date
+  texte        String   @db.Text
+  operateurNom String?
+  createdAt    DateTime @default(now())
+}
+
+model PointVente {
+  id                      Int            @id @default(autoincrement())
+  nom                     String         @unique
+  type                    TypePointVente
+  contact                 String?
+  joursLivraisonHabituels Json?
+  notes                   String?        @db.Text
+  archive                 Boolean        @default(false)
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  commandes               Commande[]
+  ventes                  VenteLigne[]
+  datesLivraison          PointVenteDateLivraison[]
+}
+
+model PointVenteDateLivraison {
+  pointVenteId Int
+  pointVente   PointVente @relation(fields: [pointVenteId], references: [id])
+  date         DateTime   @db.Date
+  notes        String?
+
+  @@id([pointVenteId, date])
+}
+
+model Commande {
+  id            Int            @id @default(autoincrement())
+  clientId      Int
+  client        Client         @relation(fields: [clientId], references: [id])
+  pointVenteId  Int
+  pointVente    PointVente     @relation(fields: [pointVenteId], references: [id])
+  dateCommande  DateTime       @db.Date
+  dateLivraison DateTime       @db.Date
+  statut        StatutCommande @default(brouillon)
+  reference     String?
+  notes         String?        @db.Text
+  operateurNom  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lignes        CommandeLigne[]
+  ventes        VenteLigne[]
+}
+
+model CommandeLigne {
+  id            Int         @id @default(autoincrement())
+  commandeId    Int
+  commande      Commande    @relation(fields: [commandeId], references: [id])
+  produitFiniId Int
+  produitFini   ProduitFini @relation(fields: [produitFiniId], references: [id])
+  quantite      Float
+  prixUnitaire  Float
+  montant       Float
+  notes         String?
+  ventes        VenteLigne[]
+}
+
+model IntentionVente {
+  id            Int         @id @default(autoincrement())
+  produitFiniId Int
+  produitFini   ProduitFini @relation(fields: [produitFiniId], references: [id])
+  annee         Int
+  unitesVisees  Float
+  priorite      PrioriteLot @default(P2)
+  notes         String?
+
+  @@unique([produitFiniId, annee])
+}
+
+model VenteLigne {
+  id              Int         @id @default(autoincrement())
+  date            DateTime    @db.Date
+  produitFiniId   Int
+  produitFini     ProduitFini @relation(fields: [produitFiniId], references: [id])
+  pointVenteId    Int
+  pointVente      PointVente  @relation(fields: [pointVenteId], references: [id])
+  clientId        Int?
+  client          Client?     @relation(fields: [clientId], references: [id])
+  quantite        Float
+  prixUnitaire    Float
+  montant         Float
+  statut          StatutVente @default(validee)
+  source          SourceVente
+  commandeId      Int?
+  commande        Commande?   @relation(fields: [commandeId], references: [id])
+  commandeLigneId Int?
+  commandeLigne   CommandeLigne? @relation(fields: [commandeLigneId], references: [id])
+  stockMouvementIds Json?
+  operateurNom    String?
+  notes           String?
+  createdAt       DateTime    @default(now())
+}
+
+// ——— Domaine F : Planification ———
+
+enum StatutProposition {
+  brouillon
+  active
+  appliquee
+  archivee
+}
+
+enum FaisabiliteLigne {
+  vert
+  jaune
+  rouge
+  non_place
+}
+
+model PropositionPlan {
+  id                Int               @id @default(autoincrement())
+  annee             Int
+  version           Int               @default(1)
+  statut            StatutProposition @default(brouillon)
+  inclureCommandes  Boolean           @default(false)
+  parametres        Json?
+  notes             String?           @db.Text
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  lignes            PropositionLigne[]
+
+  @@index([annee, statut])
+}
+
+model PropositionLigne {
+  id                   Int              @id @default(autoincrement())
+  propositionId        Int
+  proposition          PropositionPlan  @relation(fields: [propositionId], references: [id])
+  especeId             Int?
+  espece               Espece?          @relation(fields: [especeId], references: [id])
+  matiereId            Int?
+  priorite             PrioriteLot      @default(P2)
+  besoinKgBrut         Float            @default(0)
+  stockKg              Float            @default(0)
+  besoinKgNet          Float            @default(0)
+  surfaceM2Calculee    Float?
+  surfaceM2            Float?
+  plancheId            Int?
+  planche              Planche?         @relation(fields: [plancheId], references: [id])
+  faisabilite          FaisabiliteLigne @default(non_place)
+  besoinEau            BesoinEau?
+  eauLEstime           Float?
+  lotCultureExistantId Int?
+  lotCultureExistant   LotCulture?      @relation("LotExistant", fields: [lotCultureExistantId], references: [id])
+  lotCultureCreeId     Int?
+  lotCultureCree       LotCulture?      @relation("LotCree", fields: [lotCultureCreeId], references: [id])
+  manuelle             Boolean          @default(false)
+  motif                String?
+  notes                String?
+  sources              Json?
+
+  @@index([propositionId])
+  @@index([especeId])
+}
 
 enum SourceLotMatiere {
   recolte

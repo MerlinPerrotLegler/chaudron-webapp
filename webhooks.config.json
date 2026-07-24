@@ -21,5 +21,15 @@
   "stock.mouvement": [],
   "achat.declare": [],
   "transformation.declaree": [],
-  "production.declaree": []
+  "production.declaree": [],
+  "client.cree": [],
+  "client.maj": [],
+  "commande.confirmee": [],
+  "commande.livree": [],
+  "commande.annulee": [],
+  "vente.realisee": [],
+  "vente.annulee": [],
+  "intention.maj": [],
+  "planification.proposee": [],
+  "planification.appliquee": []
 }

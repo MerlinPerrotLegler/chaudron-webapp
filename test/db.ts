@@ -2,6 +2,16 @@ import { prisma } from '@/lib/prisma';
 
 /** Ordre de suppression respectant les FK. */
 export async function resetDb() {
+  await prisma.propositionLigne.deleteMany();
+  await prisma.propositionPlan.deleteMany();
+  await prisma.venteLigne.deleteMany();
+  await prisma.commandeLigne.deleteMany();
+  await prisma.commande.deleteMany();
+  await prisma.intentionVente.deleteMany();
+  await prisma.clientNote.deleteMany();
+  await prisma.pointVenteDateLivraison.deleteMany();
+  await prisma.pointVente.deleteMany();
+  await prisma.client.deleteMany();
   await prisma.productionEtape.deleteMany();
   await prisma.productionSortie.deleteMany();
   await prisma.productionLigneMatiere.deleteMany();
@@ -32,6 +42,7 @@ export async function resetDb() {
   await prisma.categorieReglementaire.deleteMany();
   await prisma.equipement.deleteMany();
   await prisma.parametres.deleteMany();
+  await prisma.appSettings.deleteMany();
   await prisma.plancheImage.deleteMany();
   await prisma.plancheJour.deleteMany();
   await prisma.travailSol.deleteMany();

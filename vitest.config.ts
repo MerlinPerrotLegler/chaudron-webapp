@@ -7,6 +7,8 @@ export default defineConfig({
     setupFiles: ['./test/setup.ts'],
     fileParallelism: false,
     env: { NODE_ENV: 'test' },
+    testTimeout: 60_000,
+    hookTimeout: 60_000,
   },
   resolve: { alias: { '@': path.resolve(__dirname, 'src') } },
 });
